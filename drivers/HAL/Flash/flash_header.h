@@ -1,7 +1,7 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   CMSIS                                                                                                       |
- * |    @file           :   CMSIS_reg.h                                                                                              	|
+ * |    @title          :   Flash                                                                                                       |
+ * |    @file           :   Flash_header.h                                                                                              |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
  * |    @origin_date    :   17/07/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
@@ -11,7 +11,8 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains register addresses of arm cortex m4 with FPU and bus base addresses                      |
+ * |    @brief          :   this header file contains useful functions to interface with the embedded flash memory inside stm32f407     |
+ * |                        common to cortex-M4 microprocessors with FPU.                                                               |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,12 +39,12 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       file Created.                                              		|
+ * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef CMSIS_REG_H_
-#define CMSIS_REG_H_
+#ifndef FLASH_HEADER_H_
+#define FLASH_HEADER_H_
 
 /******************************************************************************
  * Includes
@@ -52,23 +53,6 @@
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
-
-/**
- * @brief: these are buses base addresses, will be referred to as @HAL_CMSIS_BUSES_BASE_ADDR
- */
-#define HAL_CMSIS_AHB3_BASEADDR 0x60000000 /**< boundary address = 0x6000 0000 - 0xA000 0FFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB2_BASEADDR 0x50000000 /**< boundary address = 0x5000 0000 - 0x5006 0BFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB1_BASEADDR 0x40020000 /**< boundary address = 0x4002 0000 - 0x4007 FFFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_APB2_BASEADDR 0x40010000 /**< boundary address = 0x4001 0000 - 0x4001 57FF where this bus is advanced peripheral bus */
-#define HAL_CMSIS_APB1_BASEADDR 0x40000000 /**< boundary address = 0x4000 0000 - 0x4000 7FFF where this bus is advanced peripheral bus */
-
-/**
- * @brief: these are some common peripherals base addresses
- */
-#define HAL_CMSIS_FLASH_BASE_ADDR 0x08000000	/**< base address of the flash memory, size = 1 Megabyte*/
-#define HAL_CMSIS_SRAM1_BASE_ADDR 0x20000000	/**< base address of the sram1 memory, size = 112 KiloByte*/
-#define HAL_CMSIS_SRAM2_BASE_ADDR 0x2001C000	/**< base address of the sram2 memory, size = 16 KiloByte*/
-#define HAL_CMSIS_CCM_SRAM_BASE_ADDR 0x10000000 /**< base address of the core coupled sram memory, size = 64 KiloByte*/
 
 /******************************************************************************
  * Configuration Constants
@@ -82,6 +66,30 @@
  * Typedefs
  *******************************************************************************/
 
+/**
+ * @enum: Flash_Sectors_t
+ * @brief constants used to tell functions which sector we will be dealing with, refer to "flash_config.h" to see the base address and spaces for each memory
+ * @note: it will be referred to as @HAL_FLASH_SECTORS
+ */
+typedef enum
+{
+    HAL_FLASH_MAIN_MEM_SECTOR_0 = 0x0001,  /**< Value = 0b0000 0000 0000 0001, Base Address =  0x0800 0000 to 0x0800 3FFF, size = 16 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_1 = 0x0002,  /**< Value = 0b0000 0000 0000 0010, Base Address =  0x0800 4000 to 0x0800 7FFF, size = 16 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_2 = 0x0004,  /**< Value = 0b0000 0000 0000 0100, Base Address =  0x0800 8000 to 0x0800 BFFF, size = 16 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_3 = 0x0008,  /**< Value = 0b0000 0000 0000 1000, Base Address =  0x0800 C000 to 0x0800 FFFF, size = 16 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_4 = 0x0010,  /**< Value = 0b0000 0000 0001 0000, Base Address =  0x0801 0000 to 0x0801 FFFF, size = 64 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_5 = 0x0020,  /**< Value = 0b0000 0000 0010 0000, Base Address =  0x0802 0000 to 0x0803 FFFF, size = 128 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_6 = 0x0040,  /**< Value = 0b0000 0000 0100 0000, Base Address =  0x0804 0000 to 0x0805 FFFF, size = 128 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_7 = 0x0080,  /**< Value = 0b0000 0000 1000 0000, Base Address =  0x0806 0000 to 0x0807 FFFF, size = 128 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_8 = 0x0100,  /**< Value = 0b0000 0001 0000 0000, Base Address =  0x0808 0000 to 0x0809 FFFF, size = 128 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_9 = 0x0200,  /**< Value = 0b0000 0010 0000 0000, Base Address =  0x080A 0000 to 0x080B FFFF, size = 128 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_10 = 0x0400, /**< Value = 0b0000 0100 0000 0000, Base Address =  0x080C 0000 to 0x080D FFFF, size = 128 Kbytes */
+    HAL_FLASH_MAIN_MEM_SECTOR_11 = 0x0800, /**< Value = 0b0000 1000 0000 0000, Base Address =  0x080E 0000 to 0x080F FFFF, size = 128 Kbytes */
+    HAL_FLASH_SYSTEM_MEMORY = 0x1000,      /**< Value = 0b0001 0000 0000 0000, Base Address =  0x1FFF 0000 to 0x1FFF 77FF, size = 30 Kbytes */
+    HAL_FLASH_OTP_AREA = 0x200,            /**< Value = 0b0010 0000 0000 0000, Base Address =  0x1FFF 7800 to 0x1FFF 7A0F, size = 512 bytes */
+    HAL_FLASH_OPTION_BYTES = 0x4000,       /**< Value = 0b0100 0000 0000 0000, Base Address =  0x1FFF C000 to 0x1FFF C00F, size = 16 bytes */
+} Flash_Sectors_t;
+
 /******************************************************************************
  * Variables
  *******************************************************************************/
@@ -91,4 +99,4 @@
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*CMSIS_REG_H_*/
+#endif /*FLASH_HEADER_H_*/

@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   CMSIS                                                                                                       |
- * |    @file           :   CMSIS_reg.h                                                                                              	|
+ * |    @title          :   stdint                                                                                                      |
+ * |    @file           :   stdint.h                                                                                                    |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   17/07/2023                                                                                                  |
+ * |    @origin_date    :   19/07/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains register addresses of arm cortex m4 with FPU and bus base addresses                      |
+ * |    @brief          :   this file contains standard var types specified for stm32f407                                               |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,12 +38,12 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       file Created.                                              		|
+ * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       stdint Created.                                                 |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef CMSIS_REG_H_
-#define CMSIS_REG_H_
+#ifndef LIB_STDINT_H_
+#define LIB_STDINT_H_
 
 /******************************************************************************
  * Includes
@@ -52,23 +52,49 @@
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
+/**
+ * @brief maximum values for signed integer variables
+ */
+#define INT8_MAX 127                  /**< maximum value for signed 8-bit variable*/
+#define INT16_MAX 32767               /**< maximum value for signed 16-bit variable*/
+#define INT32_MAX 2147483647          /**< maximum value for signed 32-bit variable*/
+#define INT64_MAX 9223372036854775807 /**< maximum value for signed 64-bit variable*/
 
 /**
- * @brief: these are buses base addresses, will be referred to as @HAL_CMSIS_BUSES_BASE_ADDR
+ * @brief minimum values for signed integer variables
  */
-#define HAL_CMSIS_AHB3_BASEADDR 0x60000000 /**< boundary address = 0x6000 0000 - 0xA000 0FFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB2_BASEADDR 0x50000000 /**< boundary address = 0x5000 0000 - 0x5006 0BFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB1_BASEADDR 0x40020000 /**< boundary address = 0x4002 0000 - 0x4007 FFFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_APB2_BASEADDR 0x40010000 /**< boundary address = 0x4001 0000 - 0x4001 57FF where this bus is advanced peripheral bus */
-#define HAL_CMSIS_APB1_BASEADDR 0x40000000 /**< boundary address = 0x4000 0000 - 0x4000 7FFF where this bus is advanced peripheral bus */
+#define INT8_MAX -128                  /**< minimum value for signed 8-bit variable*/
+#define INT16_MAX -32768               /**< minimum value for signed 16-bit variable*/
+#define INT32_MAX -2147483648          /**< minimum value for signed 32-bit variable*/
+#define INT64_MAX -9223372036854775808 /**< minimum value for signed 64-bit variable*/
 
 /**
- * @brief: these are some common peripherals base addresses
+ * @brief maximum values for un-signed integer variables
  */
-#define HAL_CMSIS_FLASH_BASE_ADDR 0x08000000	/**< base address of the flash memory, size = 1 Megabyte*/
-#define HAL_CMSIS_SRAM1_BASE_ADDR 0x20000000	/**< base address of the sram1 memory, size = 112 KiloByte*/
-#define HAL_CMSIS_SRAM2_BASE_ADDR 0x2001C000	/**< base address of the sram2 memory, size = 16 KiloByte*/
-#define HAL_CMSIS_CCM_SRAM_BASE_ADDR 0x10000000 /**< base address of the core coupled sram memory, size = 64 KiloByte*/
+#define UINT8_MAX 0xff                /**< maximum value for un-signed 8-bit variable*/
+#define UINT16_MAX 0xffff             /**< maximum value for un-signed 16-bit variable*/
+#define UINT32_MAX 0xffffffff         /**< maximum value for un-signed 32-bit variable*/
+#define UINT64_MAX 0xffffffffffffffff /**< maximum value for un-signed 64-bit variable*/
+
+/**
+ * @brief minium values for un-signed integer variables
+ */
+#define UINT8_MIN 0  /**< minium value for un-signed 8-bit variable*/
+#define UINT16_MIN 0 /**< minium value for un-signed 16-bit variable*/
+#define UINT32_MIN 0 /**< minium value for un-signed 32-bit variable*/
+#define UINT64_MIN 0 /**< minium value for un-signed 64-bit variable*/
+
+/**
+ * @brief maximum values float numbers
+ */
+#define FLOAT32_MAX 3.402823466e+38F        /**< maximum value for single precision float variable (32-bit)*/
+#define FLOAT64_MAX 1.7976931348623158e+308 /**< maximum value for double precision float variable (64-bit)*/
+
+/**
+ * @brief minimum values float numbers
+ */
+#define FLOAT32_MIN 1.175494351e-38F        /**< minimum value for single precision float variable (32-bit)*/
+#define FLOAT64_MIN 2.2250738585072014e-308 /**< minimum value for double precision float variable (64-bit)*/
 
 /******************************************************************************
  * Configuration Constants
@@ -82,6 +108,44 @@
  * Typedefs
  *******************************************************************************/
 
+/**
+ * @brief signed integer variables
+ */
+typedef signed char int8_t;       /**< 8-bit signed variable type*/
+typedef signed short int int16_t; /**< 16-bit signed variable type*/
+typedef signed long int int32_t;  /**< 32-bit signed variable type*/
+typedef signed long long int64_t; /**< 64-bit signed variable type*/
+
+/**
+ * @brief un-signed integer variables
+ */
+typedef unsigned char uint8_t;       /**< 8-bit un-signed variable type*/
+typedef unsigned short int uint16_t; /**< 16-bit un-signed variable type*/
+typedef unsigned long int uint32_t;  /**< 32-bit un-signed variable type*/
+typedef unsigned long long uint64_t; /**< 64-bit un-signed variable type*/
+
+/**
+ * @brief float standard types
+ */
+typedef float float32_t;  /**< 32-bit float (single precision)*/
+typedef double float64_t; /**< 64-bit float (double precision)*/
+
+/**
+ * @brief fast signed integers (used if specified by either compiler or MCU that certain types of int are faster than others)
+ */
+typedef signed char int_fast8_t;        /**< 8-bit fast signed variable type*/
+typedef signed short int int_fast16_t;  /**< 16-bit fast signed variable type*/
+typedef signed long int int_fast32_t;   /**< 32-bit fast signed variable type*/
+typedef signed long long int_fasts64_t; /**< 64-bit fast signed variable type*/
+
+/**
+ * @brief fast un-signed integers (used if specified by either compiler or MCU that certain types of int are faster than others)
+ */
+typedef unsigned char uint_fast8_t;        /**< 8-bit fast un-signed variable type*/
+typedef unsigned short int uint_fast16_t;  /**< 16-bit fast un-signed variable type*/
+typedef unsigned long int uint_fast32_t;   /**< 32-bit fast un-signed variable type*/
+typedef unsigned long long uint_fasts64_t; /**< 64-bit fast un-signed variable type*/
+
 /******************************************************************************
  * Variables
  *******************************************************************************/
@@ -91,4 +155,4 @@
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*CMSIS_REG_H_*/
+#endif /*LIB_STDINT_H_*/

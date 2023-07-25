@@ -43,8 +43,8 @@
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef CMSIS_H_
-#define CMSIS_H_
+#ifndef CMSIS_HEADER_H_
+#define CMSIS_HEADER_H_
 
 /******************************************************************************
  * Includes
@@ -63,7 +63,7 @@
  *******************************************************************************/
 
 /**
- *  \b Macro                        :       CMSIS_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber)
+ *  \b Macro                        :       HAL_CMSIS_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber)
  *  \b Description                  :       this macro is used to map each word in the alias region to a corresponding
  *                                          bit in the bit-band region using the formula:
  *                                          "bit_word_addr = bit_band_base + (byte_offset x 32) + (bit_number × 4)"
@@ -86,7 +86,7 @@
  * @code
  * #include "CMSIS_header.h"
  * int main() {
- * int addr = CMSIS_BIT_BAND_ALIAS_ADDR(0x22000000, 0x300, 2);
+ * int addr = HAL_CMSIS_BIT_BAND_ALIAS_ADDR(0x22000000, 0x300, 2);
  * printf("%x\n", addr);    // addr = 0x22006008
  * return 0;
  * }
@@ -95,11 +95,11 @@
  * <br><b> - HISTORY OF CHANGES - </b>
  * <table align="left" style="width:800px">
  * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
- * <tr><td> 15/07/2022 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * <tr><td> 15/07/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
  * </table><br><br>
  * <hr>
  */
-#define CMSIS_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber) \
+#define HAL_CMSIS_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber) \
     ((bitBandBaseAddr) + (32 * byteOffset) + (bitNumber * 4))
 
 /******************************************************************************
@@ -115,4 +115,4 @@
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*CMSIS_H_*/
+#endif /*CMSIS_HEADER_H_*/

@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   CMSIS                                                                                                       |
- * |    @file           :   CMSIS_reg.h                                                                                              	|
+ * |    @title          :   common                                                                                                      |
+ * |    @file           :   common.h                                                                                                    |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   17/07/2023                                                                                                  |
+ * |    @origin_date    :   25/07/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains register addresses of arm cortex m4 with FPU and bus base addresses                      |
+ * |    @brief          :   this file contains some common definitions which seems to be compiler dependent                             |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,12 +38,12 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       file Created.                                              		|
+ * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef CMSIS_REG_H_
-#define CMSIS_REG_H_
+#ifndef LIB_COMMON_H_
+#define LIB_COMMON_H_
 
 /******************************************************************************
  * Includes
@@ -54,21 +54,9 @@
  *******************************************************************************/
 
 /**
- * @brief: these are buses base addresses, will be referred to as @HAL_CMSIS_BUSES_BASE_ADDR
+ * @brief: this tells the compiler not to optimize for read in case for the variable declared using value
  */
-#define HAL_CMSIS_AHB3_BASEADDR 0x60000000 /**< boundary address = 0x6000 0000 - 0xA000 0FFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB2_BASEADDR 0x50000000 /**< boundary address = 0x5000 0000 - 0x5006 0BFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB1_BASEADDR 0x40020000 /**< boundary address = 0x4002 0000 - 0x4007 FFFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_APB2_BASEADDR 0x40010000 /**< boundary address = 0x4001 0000 - 0x4001 57FF where this bus is advanced peripheral bus */
-#define HAL_CMSIS_APB1_BASEADDR 0x40000000 /**< boundary address = 0x4000 0000 - 0x4000 7FFF where this bus is advanced peripheral bus */
-
-/**
- * @brief: these are some common peripherals base addresses
- */
-#define HAL_CMSIS_FLASH_BASE_ADDR 0x08000000	/**< base address of the flash memory, size = 1 Megabyte*/
-#define HAL_CMSIS_SRAM1_BASE_ADDR 0x20000000	/**< base address of the sram1 memory, size = 112 KiloByte*/
-#define HAL_CMSIS_SRAM2_BASE_ADDR 0x2001C000	/**< base address of the sram2 memory, size = 16 KiloByte*/
-#define HAL_CMSIS_CCM_SRAM_BASE_ADDR 0x10000000 /**< base address of the core coupled sram memory, size = 64 KiloByte*/
+#define __io volatile
 
 /******************************************************************************
  * Configuration Constants
@@ -91,4 +79,4 @@
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*CMSIS_REG_H_*/
+#endif /*LIB_COMMON_H_*/
