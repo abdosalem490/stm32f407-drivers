@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   Flash                                                                                                       |
- * |    @file           :   flash_private.h                                                                                             |
+ * |    @title          :   constants                                                                                                   |
+ * |    @file           :   constants.h                                                                                                 |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   31/07/2023                                                                                                  |
+ * |    @origin_date    :   28/07/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains private variables and function used internally in implementation code                    |
+ * |    @brief          :   this file contains some common definitions which seems to be compiler dependent                             |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,35 +38,53 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    31/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef HAL_FLASH_PRIVATE_H_
-#define HAL_FLASH_PRIVATE_H_
+#ifndef LIB_CONSTANTS_H_
+#define LIB_CONSTANTS_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
 
-/**
- * @reason: contains definition for function callback
- */
-#include "../../lib/common.h"
-
-/**
- * @reason: contains definitions for standard integers
- */
-#include "../../lib/stdint.h"
-
-/**
- * @reason: assign initial values for configuration variables
- */
-#include "flash_header.h"
-
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
+
+/**
+ * @enum: LIB_Constants_DriverStates_t
+ * @brief: this is mostly used in configurations to configure whether something is enabled or disabled
+ */
+typedef enum
+{
+    LIB_CONSTANTS_DISABLED = 0,     /**< that means the thing we are dealing with is diabled*/
+    LIB_CONSTANTS_ENABLED = 1,      /**< that means the thing we are dealing with is enabled*/
+    LIB_CONSTANTS_MAX_DRIVER_STATE, /**< that value should never be used and it's only used by the implementation code for verifying the input*/
+} LIB_CONSTANTS_DriverStates_t;
+
+/**
+ * @enum: LIB_CONSTANTS_LogicalStates_t
+ * @brief: this is mostly used in dealing with things that have digital values (HIGH and LOW)
+ */
+typedef enum
+{
+    LIB_CONSTANTS_LOW = 0,         /**< that means the thing we are dealing with is having a logic high volt*/
+    LIB_CONSTANTS_HIGH = 1,        /**< that means the thing we are dealing with is is having a logic low volt*/
+    LIB_CONSTANTS_MAX_LOGIC_STATE, /**< that value should never be used and it's only used by the implementation code for verifying the input*/
+} LIB_CONSTANTS_LogicalStates_t;
+
+/**
+ * @enum: LIB_CONSTANTS_LockStates_t
+ * @brief: this is mostly used in dealing with things that have locking and unlocking sequences
+ */
+typedef enum
+{
+    LIB_CONSTANTS_UNLOCKED = 0,   /**< that means the thing we are dealing with is un locked (can't be dealt with)*/
+    LIB_CONSTANTS_LOCKED = 1,     /**< that means the thing we are dealing with is locked (can be dealt with)*/
+    LIB_CONSTANTS_MAX_LOCK_STATE, /**< that value should never be used and it's only used by the implementation code for verifying the input*/
+} LIB_CONSTANTS_LockStates_t;
 
 /******************************************************************************
  * Configuration Constants
@@ -83,28 +101,10 @@
 /******************************************************************************
  * Variables
  *******************************************************************************/
-/**
- *  @reference: HAL_FLASH_CALLBACKS
- *  @brief: callback functions used when configuring operation of flash to be interrupt based
- *  @related: @HAL_FLASH_CallbacksTypes_t in "flash_header.h"
- */
-functionCallBack_t global_pOperationSuccess_t = NULL;          /**< this is the function to be called when an embedded flash memory operation is success*/
-functionCallBack_t global_pErrWriteProtection_t = NULL;        /**< this is the function to be called when a write protection error happens*/
-functionCallBack_t global_pErrProgrammingSequence_t = NULL;    /**< this is the function to be called when a programming sequence error happens*/
-functionCallBack_t global_pErrProgrammingParallelism_t = NULL; /**< this is the function to be called when a programming parallelism error happens*/
-functionCallBack_t global_pErrProgrammingAlignment_t = NULL;   /**< this is the function to be called when a programming alignment error happens*/
-functionCallBack_t global_pErrOperation_t = NULL;              /**< this is the function to be called when an unidentified error happens*/
-
-/**
- * @brief: these are some configuration variables that changes the behavior of some interfaces
- * @reference: HAL_FLASH_CONFIG_VARS
- * @related: @HAL_FLASH_ConfigKeys_t in "flash_header.h"
- */
-uint8_t global_u8BehaviorType = HAL_FLASH_CONFIG_VAL_OPERATION_TYPE_BLOCKING;
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*HAL_FLASH_PRIVATE_H_*/
+#endif /*LIB_CONSTANTS_H_*/

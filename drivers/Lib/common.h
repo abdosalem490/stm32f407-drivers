@@ -58,6 +58,11 @@
  */
 #define __io volatile
 
+/**
+ * @brief: this is the definition of the Null pointer
+ */
+#define NULL 0xFFFFFFFF /**< this lies in the reserved memory region of ARM Cortex-M4*/
+
 /******************************************************************************
  * Configuration Constants
  *******************************************************************************/
@@ -69,6 +74,11 @@
 /******************************************************************************
  * Typedefs
  *******************************************************************************/
+
+/**
+ * @brief: mostly used as the standard type for callback functions
+ */
+typedef void (*functionCallBack_t)(void);
 
 /******************************************************************************
  * Variables

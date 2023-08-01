@@ -42,8 +42,8 @@
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef FLASH_REG_H_
-#define FLASH_REG_H_
+#ifndef HAL_FLASH_REG_H_
+#define HAL_FLASH_REG_H_
 
 /******************************************************************************
  * Includes
@@ -66,54 +66,31 @@
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
-/**
- * @related: refer to @HAL_FLASH_SECTORS in "flash_header.h"
- * @brief: these are the base addresses of different sectors of flash
- */
-#define HAL_FLASH_MAIN_MEM_SECTOR_0_BASEADDR 0x08000000  /**< Base address of sector 0 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_1_BASEADDR 0x08004000  /**< Base address of sector 1 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_2_BASEADDR 0x08008000  /**< Base address of sector 2 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_3_BASEADDR 0x0800C000  /**< Base address of sector 3 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_4_BASEADDR 0x08010000  /**< Base address of sector 4 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_5_BASEADDR 0x08020000  /**< Base address of sector 5 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_6_BASEADDR 0x08040000  /**< Base address of sector 6 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_7_BASEADDR 0x08060000  /**< Base address of sector 7 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_8_BASEADDR 0x08080000  /**< Base address of sector 8 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_9_BASEADDR 0x080A0000  /**< Base address of sector 9 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_10_BASEADDR 0x080C0000 /**< Base address of sector 10 of flash memory*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR 0x080E0000 /**< Base address of sector 11 of flash memory*/
-#define HAL_FLASH_SYSTEM_MEMORY_BASEADDR 0x1FFF0000      /**< Base address of System memory*/
-#define HAL_FLASH_OTP_AREA_BASEADDR 0x1FFF7800           /**< Base address of One time programmable (OTP) area*/
-#define HAL_FLASH_OPTION_BYTES_BASEADDR 0x1FFFC000       /**< Base address of System memory*/
 
 /**
- * @related: refer to @HAL_FLASH_SECTORS in "flash_header.h"
- * @brief: these are the base addresses of different sectors of flash
+ * @brief: base address of one-time programmable fuses that will lock OTP forever
  */
-#define HAL_FLASH_MAIN_MEM_SECTOR_1_SIZE 16000   /**< Size of sector 1 of flash memory = 16 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_2_SIZE 16000   /**< Size of sector 2 of flash memory = 16 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_3_SIZE 16000   /**< Size of sector 3 of flash memory = 16 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_4_SIZE 16000   /**< Size of sector 4 of flash memory = 16 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_5_SIZE 64000   /**< Size of sector 5 of flash memory = 64 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_6_SIZE 128000  /**< Size of sector 6 of flash memory = 128 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_7_SIZE 128000  /**< Size of sector 7 of flash memory = 128 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_8_SIZE 128000  /**< Size of sector 8 of flash memory = 128 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_9_SIZE 128000  /**< Size of sector 9 of flash memory = 128 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_10_SIZE 128000 /**< Size of sector 10 of flash memory = 128 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE 128000 /**< Size of sector 11 of flash memory = 128 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_SYSTEM_MEMORY_SIZE 30000       /**< Size of System memory = 30 Kbytes (showed size is in bytes)*/
-#define HAL_FLASH_OTP_AREA_SIZE 512              /**< Size of One time programmable (OTP) = 512 bytes (showed size is in bytes)*/
-#define HAL_FLASH_OPTION_BYTES_SIZE 16           /**< Size of option bytes = 16 bytes (showed size is in bytes)*/
+#define HAL_FLASH_OTP_LOCK_BASEADDR 0x1FFF 7A00 /**< this is the base address of the lock bytes of otp memory*/
+
+/**
+ * @brief: these are base addresses of additional memory other than main memory base address
+ */
+#define HAL_FLASH_SYSTEM_MEMORY_BASEADDR 0x1FFF0000 /**< Base address of System memory*/
+#define HAL_FLASH_OTP_AREA_BASEADDR 0x1FFF7800      /**< Base address of One time programmable (OTP) area*/
+#define HAL_FLASH_OPTION_BYTES_BASEADDR 0x1FFFC000  /**< Base address of System memory*/
+
+/**
+ * @brief: these are the addresses of the additional memories other than main memory base addresses
+ */
+#define HAL_FLASH_SYSTEM_MEMORY_SIZE 30000 /**< Size of System memory = 30 Kbytes (showed size is in bytes)*/
+#define HAL_FLASH_OTP_AREA_SIZE 512        /**< Size of One time programmable (OTP) = 512 bytes (showed size is in bytes)*/
+#define HAL_FLASH_OPTION_BYTES_SIZE 16     /**< Size of option bytes = 16 bytes (showed size is in bytes)*/
 
 /**
  * @brief: this is the base address of flash interface registers used to configure some of the flash interface behaviors
  * @note: it will be referred to as @HAL_FLASH_BASE_ADDR
  */
 #define HAL_FLASH_INTERFACE_OFFSET 0x00003C00 /**< this is the offset of the flash register from AHB1 bus base address*/
-
-/******************************************************************************
- * bit position defintions
- *******************************************************************************/
 
 /**
  * @brief: bit position definitions for FLASH_ACR (Flash access control register)
@@ -165,6 +142,18 @@
  * Configuration Constants
  *******************************************************************************/
 
+/**
+ * @brief: The following keys values must be programmed consecutively to unlock the FLASH_CR register and allow programming/erasing it
+ */
+#define HAL_FLASH_CR_KEY1 0x45670123 /**< this is the first key to be written to the register called FLASH_KEYR in order to unlock the register called FLASH_CR*/
+#define HAL_FLASH_CR_KEY2 0xCDEF89AB /**< this is the second key to be written to the register called FLASH_KEYR in order to unlock the register called FLASH_CR*/
+
+/**
+ * @brief: The following keys values must be programmed consecutively to unlock the FLASH_OPTCR register and allow programming/erasing it
+ */
+#define HAL_FLASH_OPTCR_OPTKEY1 0x08192A3B /**< this is the first key to be written to the register called FLASH_OPTKEYR in order to unlock the register called FLASH_OPTCR*/
+#define HAL_FLASH_OPTCR_OPTKEY2 0x4C5D6E7F /**< this is the second key to be written to the register called FLASH_OPTKEYR in order to unlock the register called FLASH_OPTCR*/
+
 /******************************************************************************
  * Macros
  *******************************************************************************/
@@ -184,16 +173,16 @@ typedef struct
     __io uint32_t FLASH_SR;      /**< The Flash status register gives information on ongoing program and erase operations. Address offset: 0x0C and Reset value: 0x0000 0000*/
     __io uint32_t FLASH_CR;      /**< The Flash control register is used to configure and start Flash memory operations. Address offset: 0x10 and Reset value: 0x8000 0000 */
     __io uint32_t FLASH_OPTCR;   /**< The Flash option control register register is used to modify the user option bytes. Address offset: 0x14 and Reset value: 0x0FFF AAED. The option bits are loaded with values from Flash memory at reset release.*/
-} Flash_RegDef_t;
+} HAL_FLASH_RegDef_t;
 
 /******************************************************************************
  * Variables
  *******************************************************************************/
-__io Flash_RegDef_t *global_ptr_flash_regdef_t = ((Flash_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_FLASH_INTERFACE_OFFSET)); /**< this is a pointer variable through which we will access our flash registers to configure them*/
+__io HAL_FLASH_RegDef_t *global_ptr_flash_regdef_t = ((HAL_FLASH_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_FLASH_INTERFACE_OFFSET)); /**< this is a pointer variable through which we will access our flash registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*FLASH_REG_H_*/
+#endif /*HAL_FLASH_REG_H_*/
