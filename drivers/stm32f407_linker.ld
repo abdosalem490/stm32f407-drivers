@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   constants                                                                                                   |
- * |    @file           :   constants.h                                                                                                 |
+ * |    @title          :   linker script file                                                                                          |
+ * |    @file           :   stm32f407_linker.h                                                                                          |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   28/07/2023                                                                                                  |
+ * |    @origin_date    :   05/05/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains some common definitions which seems to be compiler dependent                             |
+ * |    @brief          :   linker script for stm32f407 and it changes according to the project                                         |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,84 +38,13 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    05/05/2023      1.0.0           Abdelrahman Mohamed Salem       script Created.                                                 |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef LIB_CONSTANTS_H_
-#define LIB_CONSTANTS_H_
-
-/******************************************************************************
- * Includes
- *******************************************************************************/
-
-/******************************************************************************
- * Preprocessor Constants
- *******************************************************************************/
 
 /**
- * @enum: LIB_Constants_DriverStates_t
- * @brief: this is mostly used in configurations to configure whether something is enabled or disabled
+ * this command deal with object file formats. set the output format based on the desired endianness.
+ * If neither ‘-EB’ nor ‘-EL’ are used, then the output format will be the first argument, default. If ‘-EB’ is used, the output format will be the second argument, big. If ‘-EL’ is used, the output format will be the third argument, little.
  */
-typedef enum
-{
-    LIB_CONSTANTS_DISABLED = 0,     /**< that means the thing we are dealing with is diabled*/
-    LIB_CONSTANTS_ENABLED = 1,      /**< that means the thing we are dealing with is enabled*/
-    LIB_CONSTANTS_MAX_DRIVER_STATE, /**< that value should never be used and it's only used by the implementation code for verifying the input*/
-} LIB_CONSTANTS_DriverStates_t;
-
-/**
- * @enum: LIB_CONSTANTS_LogicalStates_t
- * @brief: this is mostly used in dealing with things that have digital values (HIGH and LOW)
- */
-typedef enum
-{
-    LIB_CONSTANTS_LOW = 0,         /**< that means the thing we are dealing with is having a logic high volt*/
-    LIB_CONSTANTS_HIGH = 1,        /**< that means the thing we are dealing with is is having a logic low volt*/
-    LIB_CONSTANTS_MAX_LOGIC_STATE, /**< that value should never be used and it's only used by the implementation code for verifying the input*/
-} LIB_CONSTANTS_LogicalStates_t;
-
-/**
- * @enum: LIB_CONSTANTS_LockStates_t
- * @brief: this is mostly used in dealing with things that have locking and unlocking sequences
- */
-typedef enum
-{
-    LIB_CONSTANTS_UNLOCKED = 0,   /**< that means the thing we are dealing with is un locked (can't be dealt with)*/
-    LIB_CONSTANTS_LOCKED = 1,     /**< that means the thing we are dealing with is locked (can be dealt with)*/
-    LIB_CONSTANTS_MAX_LOCK_STATE, /**< that value should never be used and it's only used by the implementation code for verifying the input*/
-} LIB_CONSTANTS_LockStates_t;
-
-/**
- * @enum: LIB_CONSTANTS_OperationState_t
- * @brief: this is mostly used in dealing with things that have a success of failure operation
- */
-typedef enum
-{
-    LIB_CONSTANTS_FAIL = 0,     /**< that means a successful operation*/
-    LIB_CONSTANTS_SUCCESS = 1,  /**< that means a failure operation*/
-    LIB_CONSTANTS_MAX_OP_STATE, /**< that value should never be used and it's only used by the implementation code for verifying the input*/
-} LIB_CONSTANTS_OperationState_t;
-
-/******************************************************************************
- * Configuration Constants
- *******************************************************************************/
-
-/******************************************************************************
- * Macros
- *******************************************************************************/
-
-/******************************************************************************
- * Typedefs
- *******************************************************************************/
-
-/******************************************************************************
- * Variables
- *******************************************************************************/
-
-/******************************************************************************
- * Function Prototypes
- *******************************************************************************/
-
-/*** End of File **************************************************************/
-#endif /*LIB_CONSTANTS_H_*/
+OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")

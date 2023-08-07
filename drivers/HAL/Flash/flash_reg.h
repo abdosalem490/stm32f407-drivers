@@ -70,7 +70,7 @@
 /**
  * @brief: base address of one-time programmable fuses that will lock OTP forever
  */
-#define HAL_FLASH_OTP_LOCK_BASEADDR 0x1FFF 7A00 /**< this is the base address of the lock bytes of otp memory*/
+#define HAL_FLASH_OTP_LOCK_BASEADDR 0x1FFF7A00 /**< this is the base address of the lock bytes of otp memory*/
 
 /**
  * @brief: these are base addresses of additional memory other than main memory base address
@@ -178,7 +178,7 @@ typedef struct
 /******************************************************************************
  * Variables
  *******************************************************************************/
-__io HAL_FLASH_RegDef_t *global_ptr_flash_regdef_t = ((HAL_FLASH_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_FLASH_INTERFACE_OFFSET)); /**< this is a pointer variable through which we will access our flash registers to configure them*/
+__io HAL_FLASH_RegDef_t *global_pFlashReg_t = ((HAL_FLASH_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_FLASH_INTERFACE_OFFSET)); /**< this is a pointer variable through which we will access our flash registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes

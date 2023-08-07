@@ -59,6 +59,11 @@
 #define __io volatile
 
 /**
+ * @brief: this advices the compiler to embed the function body into the code if it's called few times to avoid branches in code for a faster code
+*/
+#define __in inline
+
+/**
  * @brief: this is the definition of the Null pointer
  */
 #define NULL 0xFFFFFFFF /**< this lies in the reserved memory region of ARM Cortex-M4*/

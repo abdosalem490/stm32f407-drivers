@@ -49,6 +49,16 @@
  * Includes
  *******************************************************************************/
 
+/**
+ * @reason: contains standard integer types
+ */
+#include "stdint.h"
+
+/**
+ * @reason: contains defintion for inline
+ */
+#include "common.h"
+
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
@@ -79,6 +89,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not defined as shifting with negative numbers is compiler dependent.
  *
  *  \b Example:
@@ -122,6 +133,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -166,6 +178,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -210,6 +223,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -254,6 +268,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       None
  *
  *  \b Example:
@@ -299,6 +314,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -342,6 +358,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -386,6 +403,7 @@
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -428,6 +446,7 @@
  *  @see                            :       LIB_MATH_BTT_CLR_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -471,6 +490,7 @@
  *  @see                            :       LIB_MATH_BTT_CLR_BIT
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       None
  *
  *  \b Example:
@@ -515,6 +535,7 @@
  *  @see                            :       LIB_MATH_BTT_CLR_BIT
  *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
  *  @see                            :       LIB_MATH_BTT_GET_BIT
+ *  @see                            :       LIB_MATH_BTT_u8GetMSBSetPos
  *  @note                           :       using this function with negative numbers is not behaviorally defined.
  *
  *  \b Example:
@@ -551,6 +572,58 @@
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
+
+/**
+ *  \b function                     :       LIB_MATH_BTT_u8GetMSBSetPos(uint32_t args_u32Variable)
+ *  \b Description                  :       this function is used to return the bit position of the MSB having the value 1
+ *  @param    args_u32Variable [IN] :       this is the variable to get its MSB set bit from it.
+ *  \b PRE-CONDITION                :       None.
+ *  \b POST-CONDITION               :       None.
+ *  @return                         :       None.
+ *  @see                            :       LIB_MATH_BTT_DECODE_TO_ONES
+ *  @see                            :       LIB_MATH_BTT_SET_BITS
+ *  @see                            :       LIB_MATH_BTT_CLR_BITS
+ *  @see                            :       LIB_MATH_BTT_TOGGLE_BITS
+ *  @see                            :       LIB_MATH_BTT_GET_BITS
+ *  @see                            :       LIB_MATH_BTT_ASSIGN_BITS
+ *  @see                            :       LIB_MATH_BTT_SET_BIT
+ *  @see                            :       LIB_MATH_BTT_CLR_BIT
+ *  @see                            :       LIB_MATH_BTT_TOGGLE_BIT
+ *  @see                            :       LIB_MATH_BTT_GET_BIT
+ *  @see                            :       LIB_MATH_BTT_ASSIGN_BIT
+ *  @note                           :       using this function with negative numbers is not behaviorally defined.
+ *
+ *  \b Example:
+ *  assume variable called x has the value of 17 (0001 0001 in binary) then if we wanted to GET MSB SET bit position then x = 4
+ * @code
+ * #include "math_btt.h"
+ * #include "stdint.h"
+ * int main() {
+ * uint32_t x = 17;
+ * x = LIB_MATH_BTT_u8GetMSBSetPos(x);
+ * printf("%d\n", x);    // x = 4
+ * return 0;
+ * }
+ * @endcode
+ *
+ * <br><b> - HISTORY OF CHANGES - </b>
+ * <table align="left" style="width:800px">
+ * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
+ * <tr><td> 25/07/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * </table><br><br>
+ * <hr>
+ */
+uint8_t __in LIB_MATH_BTT_u8GetMSBSetPos(uint32_t args_u32Variable)
+{
+    uint8_t local_u8MSBSetBitPos = 0;
+    args_u32Variable = args_u32Variable >> 1;
+    while (args_u32Variable != 0)
+    {
+        args_u32Variable = args_u32Variable >> 1;
+        local_u8MSBSetBitPos++;
+    }
+    return local_u8MSBSetBitPos;
+}
 
 /*** End of File **************************************************************/
 #endif /*LIB_MATH_BTT_H_*/

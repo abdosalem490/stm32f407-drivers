@@ -201,6 +201,7 @@ typedef enum
 /**
  * @enum: HAL_FLASH_INDPEND_WATCH_DOG_TYPE
  * @brief: this holds the possible types of independent watchdog
+ * @note: When changing the WDG mode from hardware to software or from software to hardware, a system reset is required to make the change effective
  */
 typedef enum
 {
