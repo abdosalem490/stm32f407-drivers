@@ -412,7 +412,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Erase(const uint16_t arg_u8SectorNum);
  * HAL_FLASH_Init();    // make sure that you edited any array in "flash_config.h" labeled with @user_todo so that embedded flash memory can be initialized correctly
  * uint8_t arr[] = "Hello world";   // data to be written
  * uint32_t len = strlen(arr);      // length of data to be written
- * uint32 baseAddress = HAL_FLASH_MAIN_MEM_SECTOR_5_BASEADDR + 0x024f; // address of first byte of to be stored data, store data in sector 5 of flash memory with offset 0x024f from base address of sector 5
+ * uint32_t baseAddress = HAL_FLASH_MAIN_MEM_SECTOR_5_BASEADDR + 0x024f; // address of first byte of to be stored data, store data in sector 5 of flash memory with offset 0x024f from base address of sector 5
  * uint8_t* dataPointer = (uint8_t*)&arr;   // pointer to the first byte of data to be written
  * HAL_FLASH_ErrStates_t error_state = HAL_FLASH_Write(baseAddress, len, dataPointer);    // the behavior of this function shall write "Hello world" to flash memory where letter 'H' will be stored in the address 0x0802 024F and the later letter follows 'H' in the addresses so 'e' will be stored in 0x0802 0250 and so on
  *

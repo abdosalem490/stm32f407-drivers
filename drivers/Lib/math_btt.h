@@ -157,7 +157,7 @@
  * <hr>
  */
 #define LIB_MATH_BTT_SET_BITS(VAR, BTT_NO, NUM_OF_BITS) \
-    VAR = ((VAR) | ((DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO)))
+    VAR = ((VAR) | ((LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO)))
 
 /**
  *  \b Macro                        :       LIB_MATH_BTT_CLR_BITS(VAR, BTT_NO, NUM_OF_BITS)
@@ -202,7 +202,7 @@
  * <hr>
  */
 #define LIB_MATH_BTT_CLR_BITS(VAR, BTT_NO, NUM_OF_BITS) \
-    VAR = ((VAR) & (~((DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO))))
+    VAR = ((VAR) & (~((LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO))))
 
 /**
  *  \b Macro                        :       LIB_MATH_BTT_TOGGLE_BITS(VAR, BTT_NO, NUM_OF_BITS)
@@ -247,7 +247,7 @@
  * <hr>
  */
 #define LIB_MATH_BTT_TOGGLE_BITS(VAR, BTT_NO, NUM_OF_BITS) \
-    VAR = ((VAR) ^ ((DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO)))
+    VAR = ((VAR) ^ ((LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO)))
 
 /**
  *  \b Macro                        :       LIB_MATH_BTT_GET_BITS(VAR, BTT_NO, NUM_OF_BITS)
@@ -292,7 +292,7 @@
  * <hr>
  */
 #define LIB_MATH_BTT_GET_BITS(VAR, BTT_NO, NUM_OF_BITS) \
-    ((VAR >> BTT_NO) & (DECODE_TO_ONES(NUM_OF_BITS)))
+    ((VAR >> BTT_NO) & (LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS)))
 
 /**
  *  \b Macro                        :       LIB_MATH_BTT_ASSIGN_BITS(VAR, BTT_NO, VAL, NUM_OF_BITS)
@@ -338,7 +338,7 @@
  * <hr>
  */
 #define LIB_MATH_BTT_ASSIGN_BITS(VAR, BTT_NO, VAL, NUM_OF_BITS) \
-    VAR = ((VAR) & (~((DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO))) | ((VAL) << (BTT_NO)))
+    VAR = ((VAR) & (~((LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO)))) | (((VAL) << (BTT_NO)))
 
 /**
  *  \b Macro                        :       LIB_MATH_BTT_SET_BIT(VAR, BTT_NO)
@@ -613,7 +613,7 @@
  * </table><br><br>
  * <hr>
  */
-uint8_t __in LIB_MATH_BTT_u8GetMSBSetPos(uint32_t args_u32Variable)
+static __in uint8_t LIB_MATH_BTT_u8GetMSBSetPos(uint32_t args_u32Variable)
 {
     uint8_t local_u8MSBSetBitPos = 0;
     args_u32Variable = args_u32Variable >> 1;

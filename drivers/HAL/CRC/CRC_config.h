@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   common                                                                                                      |
- * |    @file           :   common.h                                                                                                    |
+ * |    @title          :   crc                                                                                                         |
+ * |    @file           :   CRC_config.h                                                                                                |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   25/07/2023                                                                                                  |
+ * |    @origin_date    :   11/08/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains some common definitions which seems to be compiler dependent                             |
+ * |    @brief          :   this header file contains configurations related to the Cyclic Redundancy check (CRC)                       |                                                               |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,12 +38,12 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    11/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef LIB_COMMON_H_
-#define LIB_COMMON_H_
+#ifndef HAL_CRC_CONFIG_H_
+#define HAL_CRC_CONFIG_H_
 
 /******************************************************************************
  * Includes
@@ -52,23 +52,6 @@
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
-
-/**
- * @brief: this tells the compiler not to optimize for read in case for the variable declared using value
- */
-#define __io volatile
-
-/**
- * @brief: this advices the compiler to embed the function body into the code if it's called few times to avoid branches in code for a faster code
- */
-#define __in inline
-
-/**
- * @brief: this is the definition of the Null pointer
- */
-#ifndef NULL
-#define NULL (void *)0xFFFFFFFF /**< this lies in the reserved memory region of ARM Cortex-M4*/
-#endif
 
 /******************************************************************************
  * Configuration Constants
@@ -79,13 +62,12 @@
  *******************************************************************************/
 
 /******************************************************************************
- * Typedefs
+ * Tables
  *******************************************************************************/
 
-/**
- * @brief: mostly used as the standard type for callback functions
- */
-typedef void (*functionCallBack_t)(void);
+/******************************************************************************
+ * Typedefs
+ *******************************************************************************/
 
 /******************************************************************************
  * Variables
@@ -96,4 +78,4 @@ typedef void (*functionCallBack_t)(void);
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*LIB_COMMON_H_*/
+#endif /*HAL_CRC_CONFIG_H_*/

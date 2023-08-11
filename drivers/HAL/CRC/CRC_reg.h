@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   common                                                                                                      |
- * |    @file           :   common.h                                                                                                    |
+ * |    @title          :   crc                                                                                                         |
+ * |    @file           :   CRC_reg.h                                                                                                   |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   25/07/2023                                                                                                  |
+ * |    @origin_date    :   11/08/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains some common definitions which seems to be compiler dependent                             |
+ * |    @brief          :   this file contains registers addresses and definitions structs that deals with CRC registers                |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,37 +38,49 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    11/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef LIB_COMMON_H_
-#define LIB_COMMON_H_
+#ifndef HAL_CRC_REG_H_
+#define HAL_CRC_REG_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
+/**
+ * @reason: contains standard definitions for the variables
+ */
+#include "../../lib/stdint.h"
+
+/**
+ * @reason: contains base addresses of AHB1 bus
+ */
+#include "../CMSIS/CMSIS_reg.h"
+
+/**
+ * @reason: contains volatile keyword definition regarding selected compiler
+ */
+#include "../../lib/common.h"
 
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
 
 /**
- * @brief: this tells the compiler not to optimize for read in case for the variable declared using value
+ * @brief: this is the base address of flash interface registers used to configure some of the flash interface behaviors
+ * @note: it will be referred to as @HAL_FLASH_BASE_ADDR
  */
-#define __io volatile
+#define HAL_CRC_OFFSET 0x00003000 /**< this is the offset of the CRC register from AHB1 bus base address*/
 
 /**
- * @brief: this advices the compiler to embed the function body into the code if it's called few times to avoid branches in code for a faster code
+ * @brief: bit position definitions for CRC_IDR (CRC Independent data register)
  */
-#define __in inline
-
+#define HAL_CRC_INDEPENDET_DATA_REG 0 /**< temporary data register for temporary memory*/
 /**
- * @brief: this is the definition of the Null pointer
+ * @brief: bit position definitions for CRC_CR (CRC Control register)
  */
-#ifndef NULL
-#define NULL (void *)0xFFFFFFFF /**< this lies in the reserved memory region of ARM Cortex-M4*/
-#endif
+#define HAL_CRC_CR_RESET 0 /**< RESET bit,  Resets the CRC calculation unit and sets the data register to 0xFFFF FFFF. This bit can only be set, it is automatically cleared by hardware.*/
 
 /******************************************************************************
  * Configuration Constants
@@ -83,17 +95,23 @@
  *******************************************************************************/
 
 /**
- * @brief: mostly used as the standard type for callback functions
+ * @brief: this holds all registers used to configure embedded CRC
  */
-typedef void (*functionCallBack_t)(void);
+typedef struct
+{
+    __io uint32_t CRC_DR;  /**< Used as an input register when writing new data into the CRC calculator. Holds the previous CRC calculation result when it is read.*/
+    __io uint32_t CRC_IDR; /**< contains independent data register for temporary memory not affected by reset*/
+    __io uint32_t CRC_CR;  /**< just constains reset bit that resets CRC for additional operation*/
+} HAL_CRC_RegDef_t;
 
 /******************************************************************************
  * Variables
  *******************************************************************************/
+__io HAL_CRC_RegDef_t *global_pCRCReg_t = ((HAL_CRC_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_CRC_OFFSET)); /**< this is a pointer variable through which we will access our CRC registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*LIB_COMMON_H_*/
+#endif /*HAL_FLASH_REG_H_*/

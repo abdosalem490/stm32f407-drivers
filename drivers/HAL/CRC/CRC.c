@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   common                                                                                                      |
- * |    @file           :   common.h                                                                                                    |
+ * |    @title          :   Flash                                                                                                       |
+ * |    @file           :   Flash_header.h                                                                                              |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   25/07/2023                                                                                                  |
+ * |    @origin_date    :   01/08/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,8 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains some common definitions which seems to be compiler dependent                             |
+ * |    @brief          :   this header file contains useful functions to interface with the embedded flash memory inside stm32f407     |
+ * |                        common to cortex-M4 microprocessors with FPU.                                                               |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,62 +39,75 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    01/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
-
-#ifndef LIB_COMMON_H_
-#define LIB_COMMON_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
-
-/******************************************************************************
- * Preprocessor Constants
- *******************************************************************************/
+/**
+ * @reason: contains standard definitions for standard integers
+ */
+#include "../../lib/stdint.h"
 
 /**
- * @brief: this tells the compiler not to optimize for read in case for the variable declared using value
+ * @reason: contains definition for NULL
  */
-#define __io volatile
+#include "../../lib/common.h"
 
 /**
- * @brief: this advices the compiler to embed the function body into the code if it's called few times to avoid branches in code for a faster code
+ * @reason: contains constants common values
  */
-#define __in inline
+#include "../../lib/constants.h"
 
 /**
- * @brief: this is the definition of the Null pointer
+ * @reason: contains useful functions that deals with bit level math
  */
-#ifndef NULL
-#define NULL (void *)0xFFFFFFFF /**< this lies in the reserved memory region of ARM Cortex-M4*/
-#endif
+#include "../../Lib/math_btt.h"
+
+/**
+ * @reason: contains all initial user configurations for flash
+ */
+#include "flash_config.h"
+
+/**
+ * @reason: contains all the interface functions to be implemented
+ */
+#include "flash_header.h"
+
+/**
+ * @reason: contains all register addresses and bit definitions for embedded flash configuration registers
+ */
+#include "flash_reg.h"
+
+/**
+ * @reason: contains all private function declaration and global variables
+ */
+#include "flash_private.h"
 
 /******************************************************************************
- * Configuration Constants
+ * Module Preprocessor Constants
  *******************************************************************************/
 
 /******************************************************************************
- * Macros
+ * Module Preprocessor Macros
  *******************************************************************************/
 
 /******************************************************************************
- * Typedefs
+ * Module Typedefs
  *******************************************************************************/
 
-/**
- * @brief: mostly used as the standard type for callback functions
- */
-typedef void (*functionCallBack_t)(void);
-
 /******************************************************************************
- * Variables
+ * Module Variable Definitions
  *******************************************************************************/
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
-/*** End of File **************************************************************/
-#endif /*LIB_COMMON_H_*/
+/******************************************************************************
+ * Function Definitions
+ *******************************************************************************/
+
+/*************** END OF FUNCTIONS ***************************************************************************/

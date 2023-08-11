@@ -298,7 +298,7 @@ const HAL_FLASH_MiscellaneousConfig_t globalConstArr_MiscellaneousConfig_t[] = {
     {
         .ResetOnStandBy = LIB_CONSTANTS_DISABLED,
         .ResetOnStop = LIB_CONSTANTS_DISABLED,
-        .IndependentWatchDogType = HAL_FLASH_INDPEND_WATCH_DOG_TYPE_HW,
+        .IndependentWatchDogType = HAL_FLASH_INDPEND_WATCH_DOG_TYPE_SW,
         .BrownoutResetLevel = HAL_FLASH_BROWN_RESET_LVL_OFF,
     }
 

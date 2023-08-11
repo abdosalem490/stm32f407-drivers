@@ -64,7 +64,7 @@
 /**
  * @reason: contains useful functions that deals with bit level math
  */
-#include "../../math_btt.h"
+#include "../../Lib/math_btt.h"
 
 /**
  * @reason: contains all initial user configurations for flash
@@ -118,11 +118,12 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Init()
     // local used variables
     uint16_t local_u16TempVal = 0;
     uint8_t local_u32Counter = 0;
+    uint8_t local_u8TempBitPos = 0;
     uint8_t local_u8SectorsLength = sizeof globalConstArr_SectorsConfig_t / sizeof globalConstArr_SectorsConfig_t[0];
     HAL_FLASH_ErrStates_t local_errState_t = HAL_FLASH_OK;
 
     // check for errors
-    for (local_u32Counter = 0; local_u32Counter < local_u8SectorsLength; i++) // if you want to improve code, unroll this for loop for 11 lines of code
+    for (local_u32Counter = 0; local_u32Counter < local_u8SectorsLength; local_u32Counter++) // if you want to improve code, unroll this for loop for 11 lines of code
     {
         if (globalConstArr_SectorsConfig_t[local_u32Counter].WriteProtection >= LIB_CONSTANTS_MAX_DRIVER_STATE || globalConstArr_SectorsConfig_t[local_u32Counter].SectorNumber >= HAL_FLASH_MAX_MAIN_MEM_SECTOR)
         {
@@ -161,7 +162,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Init()
         global_pFlashReg_t->FLASH_KEYR = HAL_FLASH_CR_KEY1;
         global_pFlashReg_t->FLASH_KEYR = HAL_FLASH_CR_KEY2;
         global_pFlashReg_t->FLASH_OPTKEYR = HAL_FLASH_OPTCR_OPTKEY1;
-        global_pFlashReg_t->FLASH_KEYR = HAL_FLASH_OPTCR_OPTKEY2;
+        global_pFlashReg_t->FLASH_OPTKEYR = HAL_FLASH_OPTCR_OPTKEY2;
 
         // assign global configuration variables
         global_u8BehaviorType = globalConstArr_FlashConfig_t[0].InterruptsEnabled == LIB_CONSTANTS_ENABLED ? HAL_FLASH_CONFIG_VAL_OPERATION_TYPE_INTERRUPT : HAL_FLASH_CONFIG_VAL_OPERATION_TYPE_BLOCKING;
@@ -174,23 +175,31 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Init()
         LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_ERRIE, globalConstArr_FlashConfig_t[0].InterruptsEnabled);
         LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_EOPIE, globalConstArr_FlashConfig_t[0].InterruptsEnabled);
         LIB_MATH_BTT_ASSIGN_BITS(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PSIZE, globalConstArr_FlashConfig_t[0].ProgramSize, 2);
-        LIB_MATH_BTT_ASSIGN_BITS(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_RDP, globalConstArr_FlashConfig_t[0].ReadProtectionLevel, 8);
 
-        for (local_u32Counter = 0; local_u32Counter < local_u8SectorsLength; i++) // if you want to improve code, unroll this for loop for 11 lines of code
+        for (local_u32Counter = 0; local_u32Counter < local_u8SectorsLength; local_u32Counter++) // if you want to improve code, unroll this for loop for 11 lines of code
         {
-            local_u16TempVal |= (!globalConstArr_SectorsConfig_t[local_u32Counter].WriteProtection << globalConstArr_SectorsConfig_t[local_u32Counter].SectorNumber);
+            local_u8TempBitPos = LIB_MATH_BTT_u8GetMSBSetPos(globalConstArr_SectorsConfig_t[local_u32Counter].SectorNumber);
+            local_u16TempVal |= (!globalConstArr_SectorsConfig_t[local_u32Counter].WriteProtection << local_u8TempBitPos);
         }
+
         LIB_MATH_BTT_ASSIGN_BITS(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_nWRP, local_u16TempVal, 12);
 
         LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_nRST_STDBY, !globalConstArr_MiscellaneousConfig_t[0].ResetOnStandBy);
         LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_nRST_STOP, !globalConstArr_MiscellaneousConfig_t[0].ResetOnStop);
-        LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_WDG_SW, !globalConstArr_MiscellaneousConfig_t[0].IndependentWatchDogType);
+        LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_WDG_SW, globalConstArr_MiscellaneousConfig_t[0].IndependentWatchDogType);
         LIB_MATH_BTT_ASSIGN_BITS(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_BOR_LEV, globalConstArr_MiscellaneousConfig_t[0].BrownoutResetLevel, 2);
-        LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_OPTSTRT);
+
+        LIB_MATH_BTT_ASSIGN_BITS(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_RDP, globalConstArr_FlashConfig_t[0].ReadProtectionLevel, 8);
 
         // lock configuration if configured
         LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_LOCK, globalConstArr_FlashConfig_t[0].LockConfiguration);
         LIB_MATH_BTT_ASSIGN_BIT(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_OPTLOCK, globalConstArr_FlashConfig_t[0].LockConfiguration);
+
+        // save the values // TODO: Uncomment these lines after resolving readout protection level increase error
+        /*LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_OPTCR, HAL_FLASH_OPTCR_OPTSTRT);
+        while (LIB_MATH_BTT_GET_BIT(global_pFlashReg_t->FLASH_SR, HAL_FLASH_SR_BSY) == 1)
+        {
+        };*/
 
         // check for errors
         local_errState_t = HAL_FLASH_GetHardwareErrors();
@@ -322,13 +331,13 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
     HAL_FLASH_ErrStates_t local_errState_t = HAL_FLASH_OK;
 
     // check for errors
-    if (!((argConst_u32BaseAddress >= HAL_FLASH_MAIN_MEM_SECTOR_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
-          argConst_u32BaseAddress >= HAL_FLASH_OTP_BLOCK_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)))
+    if (!(argConst_u32BaseAddress >= HAL_FLASH_MAIN_MEM_SECTOR_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
+        (argConst_u32BaseAddress >= HAL_FLASH_OTP_BLOCK_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)))
     {
         local_errState_t = HAL_FLASH_ERR_OUT_OF_RANGE;
     }
-    else if ((argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE) && (argConst_u32BaseAddress + argConst_u32DataLen) > (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
-             argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE) && (argConst_u32BaseAddress + argConst_u32DataLen) > (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE))
+    else if ((argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE) && (argConst_u32BaseAddress + arg_u32DataLen) > (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
+             (argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE) && (argConst_u32BaseAddress + arg_u32DataLen) > (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)))
     {
         local_errState_t = HAL_FLASH_ERR_NOT_ENOUGH_MEM;
     }
@@ -356,21 +365,21 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
     if (local_errState_t == HAL_FLASH_OK)
     {
         // assign some values
-        global_pu8MemWriteVar = (uint8_t *)argConst_u32BaseAddress;
-        global_pu16MemWriteVar = (uint16_t *)argConst_u32BaseAddress;
-        global_pu32MemWriteVar = (uint32_t *)argConst_u32BaseAddress;
-        global_pu64MemWriteVar = (uint64_t *)argConst_u32BaseAddress;
+        global_pu8MemWriteVar = ((uint8_t *)argConst_u32BaseAddress & (~0x0));
+        global_pu16MemWriteVar = ((uint16_t *)argConst_u32BaseAddress & (~0x1));
+        global_pu32MemWriteVar = ((uint32_t *)argConst_u32BaseAddress & (~0x3));
+        global_pu64MemWriteVar = ((uint64_t *)argConst_u32BaseAddress & (~0x6));
 
         // check for type of operation
         if (global_u8BehaviorType == HAL_FLASH_CONFIG_VAL_OPERATION_TYPE_BLOCKING)
         {
+            LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
 
             if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X8)
             {
-
+                arg_u32DataLen &= (~0x0);
                 for (; arg_u32DataLen > 0; arg_u32DataLen -= 1)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
 
                     *global_pu8MemWriteVar = *(uint8_t *)argConst_pu8WriteData;
                     global_pu8MemWriteVar++;
@@ -383,10 +392,9 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
             }
             else if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X16)
             {
-
+                arg_u32DataLen &= (~0x1);
                 for (; arg_u32DataLen > 0; arg_u32DataLen -= 2)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
 
                     *global_pu16MemWriteVar = *(uint16_t *)argConst_pu8WriteData;
                     global_pu16MemWriteVar++;
@@ -399,10 +407,9 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
             }
             else if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X32)
             {
-
+                arg_u32DataLen &= (~0x3);
                 for (; arg_u32DataLen > 0; arg_u32DataLen -= 4)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
 
                     *global_pu32MemWriteVar = *(uint32_t *)argConst_pu8WriteData;
                     global_pu32MemWriteVar++;
@@ -415,10 +422,9 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
             }
             else if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X64)
             {
-
+                arg_u32DataLen &= (~0x7);
                 for (; arg_u32DataLen > 0; arg_u32DataLen -= 8)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
 
                     *global_pu64MemWriteVar = *(uint64_t *)argConst_pu8WriteData;
                     global_pu32MemWriteVar++;
@@ -439,6 +445,8 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
             global_pu16MemWriteVar = NULL;
             global_pu32MemWriteVar = NULL;
             global_pu64MemWriteVar = NULL;
+            LIB_MATH_BTT_CLR_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
+            local_errState_t = HAL_FLASH_GetHardwareErrors();
         }
         else if (global_u8BehaviorType == HAL_FLASH_CONFIG_VAL_OPERATION_TYPE_INTERRUPT)
         {
@@ -446,7 +454,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
             globalConst_pu8WriteData = argConst_pu8WriteData;
             global_u8WhichOperationToExecute = HAL_FLASH_IRQ_OP_WRITE;
 
-            LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+            LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
             if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X8)
             {
                 *global_pu8MemWriteVar = *(uint8_t *)globalConst_pu8WriteData;
@@ -478,6 +486,12 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
             else
             {
                 local_errState_t = HAL_FLASH_ERR_INVALID_CONFIG;
+            }
+
+            local_errState_t = HAL_FLASH_GetHardwareErrors();
+            if (local_errState_t == HAL_FLASH_ERR_FLASH_BUSY)
+            {
+                local_errState_t = HAL_FLASH_OK;
             }
         }
         else
@@ -543,13 +557,13 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Fill(const uint32_t argConst_u32BaseAddress, uin
     HAL_FLASH_ErrStates_t local_errState_t = HAL_FLASH_OK;
 
     // check for errors
-    if (!((argConst_u32BaseAddress >= HAL_FLASH_MAIN_MEM_SECTOR_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
-          argConst_u32BaseAddress >= HAL_FLASH_OTP_BLOCK_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)))
+    if (!(((argConst_u32BaseAddress >= HAL_FLASH_MAIN_MEM_SECTOR_0_BASEADDR) && (argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE))) ||
+          ((argConst_u32BaseAddress >= HAL_FLASH_OTP_BLOCK_0_BASEADDR) && (argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)))))
     {
         local_errState_t = HAL_FLASH_ERR_OUT_OF_RANGE;
     }
-    else if ((argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE) && (argConst_u32BaseAddress + arg_u32AddressLen) > (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
-             argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE) && (argConst_u32BaseAddress + arg_u32AddressLen) > (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE))
+    else if (((argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) && ((argConst_u32BaseAddress + arg_u32AddressLen) > (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE))) ||
+             ((argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)) && ((argConst_u32BaseAddress + arg_u32AddressLen) > (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE))))
     {
         local_errState_t = HAL_FLASH_ERR_NOT_ENOUGH_MEM;
     }
@@ -587,7 +601,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Fill(const uint32_t argConst_u32BaseAddress, uin
 
                 for (; arg_u32AddressLen > 0; arg_u32AddressLen -= 1)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
 
                     *global_pu8MemWriteVar = (uint8_t)argConst_u8WriteData;
                     global_pu8MemWriteVar++;
@@ -602,7 +616,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Fill(const uint32_t argConst_u32BaseAddress, uin
 
                 for (; arg_u32AddressLen > 0; arg_u32AddressLen -= 2)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
 
                     *global_pu16MemWriteVar = (uint16_t)(argConst_u8WriteData | argConst_u8WriteData << 8);
                     global_pu16MemWriteVar++;
@@ -617,7 +631,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Fill(const uint32_t argConst_u32BaseAddress, uin
 
                 for (; arg_u32AddressLen > 0; arg_u32AddressLen -= 4)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
 
                     *global_pu32MemWriteVar = (uint32_t)(argConst_u8WriteData | argConst_u8WriteData << 8 | argConst_u8WriteData << 16 | argConst_u8WriteData << 24);
                     global_pu32MemWriteVar++;
@@ -632,9 +646,9 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Fill(const uint32_t argConst_u32BaseAddress, uin
 
                 for (; arg_u32AddressLen > 0; arg_u32AddressLen -= 8)
                 {
-                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+                    LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
 
-                    *global_pu64MemWriteVar = (uint64_t)(argConst_u8WriteData | argConst_u8WriteData << 8 | argConst_u8WriteData << 16 | argConst_u8WriteData << 24 | argConst_u8WriteData << 32 | argConst_u8WriteData << 40 | argConst_u8WriteData << 48 | argConst_u8WriteData << 56);
+                    *global_pu64MemWriteVar = ((uint64_t)argConst_u8WriteData | (uint64_t)argConst_u8WriteData << 8 | (uint64_t)argConst_u8WriteData << 16 | (uint64_t)argConst_u8WriteData << 24 | (uint64_t)argConst_u8WriteData << 32 | (uint64_t)argConst_u8WriteData << 40 | (uint64_t)argConst_u8WriteData << 48 | (uint64_t)argConst_u8WriteData << 56);
                     global_pu32MemWriteVar++;
 
                     while (LIB_MATH_BTT_GET_BIT(global_pFlashReg_t->FLASH_SR, HAL_FLASH_SR_BSY) == 1)
@@ -659,7 +673,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Fill(const uint32_t argConst_u32BaseAddress, uin
             global_u8WriteData = argConst_u8WriteData;
             global_u8WhichOperationToExecute = HAL_FLASH_IRQ_OP_WRITE;
 
-            LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+            LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
             if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X8)
             {
                 *global_pu8MemWriteVar = (uint8_t)global_u8WriteData;
@@ -680,7 +694,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Fill(const uint32_t argConst_u32BaseAddress, uin
             }
             else if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X64)
             {
-                *global_pu64MemWriteVar = (uint64_t)(argConst_u8WriteData | argConst_u8WriteData << 8 | argConst_u8WriteData << 16 | argConst_u8WriteData << 24 | argConst_u8WriteData << 32 | argConst_u8WriteData << 40 | argConst_u8WriteData << 48 | argConst_u8WriteData << 56);
+                *global_pu64MemWriteVar = ((uint64_t)argConst_u8WriteData | (uint64_t)argConst_u8WriteData << 8 | (uint64_t)argConst_u8WriteData << 16 | (uint64_t)argConst_u8WriteData << 24 | (uint64_t)argConst_u8WriteData << 32 | (uint64_t)argConst_u8WriteData << 40 | (uint64_t)argConst_u8WriteData << 48 | (uint64_t)argConst_u8WriteData << 56);
                 global_pu32MemWriteVar++;
                 global_u32DataLen -= 8;
             }
@@ -708,13 +722,13 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Read(const uint32_t argConst_u32BaseAddress, uin
     uint8_t *local_pu8FlashAddr = (uint8_t *)argConst_u32BaseAddress;
 
     // check for errors
-    if (!((argConst_u32BaseAddress >= HAL_FLASH_MAIN_MEM_SECTOR_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
-          argConst_u32BaseAddress >= HAL_FLASH_OTP_BLOCK_0_BASEADDR && argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)))
+    if (!((((argConst_u32BaseAddress >= HAL_FLASH_MAIN_MEM_SECTOR_0_BASEADDR) && (argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)))) ||
+          ((argConst_u32BaseAddress >= HAL_FLASH_OTP_BLOCK_0_BASEADDR) && (argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)))))
     {
         local_errState_t = HAL_FLASH_ERR_OUT_OF_RANGE;
     }
-    else if ((argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE) && (argConst_u32BaseAddress + arg_u32DataLen) > (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) ||
-             argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE) && (argConst_u32BaseAddress + arg_u32DataLen) > (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE))
+    else if (((argConst_u32BaseAddress <= (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE)) && ((argConst_u32BaseAddress + arg_u32DataLen) > (HAL_FLASH_MAIN_MEM_SECTOR_11_BASEADDR + HAL_FLASH_MAIN_MEM_SECTOR_11_SIZE))) ||
+             ((argConst_u32BaseAddress <= (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE)) && ((argConst_u32BaseAddress + arg_u32DataLen) > (HAL_FLASH_OTP_BLOCK_15_BASEADDR + HAL_FLASH_OPT_BLOCK_SIZE))))
     {
         local_errState_t = HAL_FLASH_ERR_NOT_ENOUGH_MEM;
     }
@@ -800,7 +814,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_RegisterCallback(const uint8_t argConst_u8CallBa
     // main function
     if (local_errState_t == HAL_FLASH_OK)
     {
-        if (LIB_MATH_BTT_GET_BIT(argConst_u8CallBackType, HAL_FLASH_CALLBACK_TYPE_SUCCESS) == 1)
+        if ((argConst_u8CallBackType & HAL_FLASH_CALLBACK_TYPE_SUCCESS) != 0)
         {
             global_pOperationSuccess_t = argConst_pFunctionCallBack;
         }
@@ -809,7 +823,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_RegisterCallback(const uint8_t argConst_u8CallBa
             // do nothing
         }
 
-        if (LIB_MATH_BTT_GET_BIT(argConst_u8CallBackType, HAL_FLASH_CALLBACK_TYPE_ERR_WRITE_PROTECTION) == 1)
+        if ((argConst_u8CallBackType & HAL_FLASH_CALLBACK_TYPE_ERR_WRITE_PROTECTION) != 0)
         {
             global_pErrWriteProtection_t = argConst_pFunctionCallBack;
         }
@@ -818,7 +832,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_RegisterCallback(const uint8_t argConst_u8CallBa
             // do nothing
         }
 
-        if (LIB_MATH_BTT_GET_BIT(argConst_u8CallBackType, HAL_FLASH_CALLBACK_TYPE_ERR_PROGRAMMING_SEQUENCE) == 1)
+        if ((argConst_u8CallBackType & HAL_FLASH_CALLBACK_TYPE_ERR_PROGRAMMING_SEQUENCE) != 0)
         {
             global_pErrProgrammingSequence_t = argConst_pFunctionCallBack;
         }
@@ -827,7 +841,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_RegisterCallback(const uint8_t argConst_u8CallBa
             // do nothing
         }
 
-        if (LIB_MATH_BTT_GET_BIT(argConst_u8CallBackType, HAL_FLASH_CALLBACK_TYPE_ERR_PROGRAMMING_PARALLELISM) == 1)
+        if ((argConst_u8CallBackType & HAL_FLASH_CALLBACK_TYPE_ERR_PROGRAMMING_PARALLELISM) != 0)
         {
             global_pErrProgrammingParallelism_t = argConst_pFunctionCallBack;
         }
@@ -836,7 +850,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_RegisterCallback(const uint8_t argConst_u8CallBa
             // do nothing
         }
 
-        if (LIB_MATH_BTT_GET_BIT(argConst_u8CallBackType, HAL_FLASH_CALLBACK_TYPE_ERR_PROGRAMMING_ALIGNMENT) == 1)
+        if ((argConst_u8CallBackType & HAL_FLASH_CALLBACK_TYPE_ERR_PROGRAMMING_ALIGNMENT) != 0)
         {
             global_pErrProgrammingAlignment_t = argConst_pFunctionCallBack;
         }
@@ -845,7 +859,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_RegisterCallback(const uint8_t argConst_u8CallBa
             // do nothing
         }
 
-        if (LIB_MATH_BTT_GET_BIT(argConst_u8CallBackType, HAL_FLASH_CALLBACK_TYPE_ERR_OPERATION) == 1)
+        if ((argConst_u8CallBackType & HAL_FLASH_CALLBACK_TYPE_ERR_OPERATION) != 0)
         {
             global_pErrOperation_t = argConst_pFunctionCallBack;
         }
@@ -864,6 +878,9 @@ HAL_FLASH_ErrStates_t HAL_FLASH_RegisterCallback(const uint8_t argConst_u8CallBa
  */
 void FLASH_IRQHandler(void)
 {
+    // local variables
+    static HAL_FLASH_ErrStates_t local_hardwareErrors_t = HAL_FLASH_OK;
+
     // check for which operation to execute
     if (global_u8WhichOperationToExecute == HAL_FLASH_IRQ_OP_ERASE) // check if there is sectors to erase
     {
@@ -893,7 +910,7 @@ void FLASH_IRQHandler(void)
     }
     else if (global_u8WhichOperationToExecute == HAL_FLASH_IRQ_OP_WRITE) // check if there is data to write
     {
-        LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+        LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
         if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X8)
         {
             *global_pu8MemWriteVar = *(uint8_t *)globalConst_pu8WriteData;
@@ -924,10 +941,6 @@ void FLASH_IRQHandler(void)
         }
         else
         {
-            local_errState_t = HAL_FLASH_ERR_INVALID_CONFIG;
-        }
-        else
-        {
             // do nothing
         }
 
@@ -949,7 +962,7 @@ void FLASH_IRQHandler(void)
     }
     else if (global_u8WhichOperationToExecute == HAL_FLASH_IRQ_OP_FILL)
     {
-        LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->CR, HAL_FLASH_CR_PG);
+        LIB_MATH_BTT_SET_BIT(global_pFlashReg_t->FLASH_CR, HAL_FLASH_CR_PG);
         if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X8)
         {
             *global_pu8MemWriteVar = (uint8_t)global_u8WriteData;
@@ -958,25 +971,25 @@ void FLASH_IRQHandler(void)
         }
         else if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X16)
         {
-            *global_pu16MemWriteVar = (uint16_t)(argConst_u8WriteData | argConst_u8WriteData << 8);
+            *global_pu16MemWriteVar = (uint16_t)(global_u8WriteData | global_u8WriteData << 8);
             global_pu16MemWriteVar++;
             global_u32DataLen -= 2;
         }
         else if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X32)
         {
-            *global_pu32MemWriteVar = (uint32_t)(argConst_u8WriteData | argConst_u8WriteData << 8 | argConst_u8WriteData << 16 | argConst_u8WriteData << 24);
+            *global_pu32MemWriteVar = (uint32_t)(global_u8WriteData | global_u8WriteData << 8 | global_u8WriteData << 16 | global_u8WriteData << 24);
             global_pu32MemWriteVar++;
             global_u32DataLen -= 4;
         }
         else if (globalConstArr_FlashConfig_t[0].ProgramSize == HAL_FLASH_PROGRAM_SIZE_X64)
         {
-            *global_pu64MemWriteVar = (uint64_t)(argConst_u8WriteData | argConst_u8WriteData << 8 | argConst_u8WriteData << 16 | argConst_u8WriteData << 24 | argConst_u8WriteData << 32 | argConst_u8WriteData << 40 | argConst_u8WriteData << 48 | argConst_u8WriteData << 56);
+            *global_pu64MemWriteVar = ((uint64_t)global_u8WriteData | (uint64_t)global_u8WriteData << 8 | (uint64_t)global_u8WriteData << 16 | (uint64_t)global_u8WriteData << 24 | (uint64_t)global_u8WriteData << 32 | (uint64_t)global_u8WriteData << 40 | (uint64_t)global_u8WriteData << 48 | (uint64_t)global_u8WriteData << 56);
             global_pu32MemWriteVar++;
             global_u32DataLen -= 8;
         }
         else
         {
-            local_errState_t = HAL_FLASH_ERR_INVALID_CONFIG;
+            // do nothing
         }
 
         if (global_u32DataLen <= 0)
@@ -1001,7 +1014,7 @@ void FLASH_IRQHandler(void)
     }
 
     // check for any hardware errors
-    HAL_FLASH_ErrStates_t local_hardwareErrors_t = HAL_FLASH_GetHardwareErrors();
+    local_hardwareErrors_t = HAL_FLASH_GetHardwareErrors();
     if (local_hardwareErrors_t == HAL_FLASH_ERR_PROGRAMMING_SEQUENCE && global_pErrProgrammingSequence_t != NULL)
     {
         global_u8SuccessOperationState = LIB_CONSTANTS_FAIL;

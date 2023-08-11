@@ -42,6 +42,7 @@
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
+
 #ifndef LIB_STDINT_H_
 #define LIB_STDINT_H_
 
@@ -55,19 +56,34 @@
 /**
  * @brief maximum values for signed integer variables
  */
-#define INT8_MAX 127                  /**< maximum value for signed 8-bit variable*/
-#define INT16_MAX 32767               /**< maximum value for signed 16-bit variable*/
-#define INT32_MAX 2147483647          /**< maximum value for signed 32-bit variable*/
-#define INT64_MAX 9223372036854775807 /**< maximum value for signed 64-bit variable*/
+#ifndef INT8_MAX
+	#define INT8_MAX 127                  /**< maximum value for signed 8-bit variable*/
+#endif
+#ifndef INT16_MAX
+	#define INT16_MAX 32767               /**< maximum value for signed 16-bit variable*/
+#endif
+#ifndef INT32_MAX
+	#define INT32_MAX 2147483647          /**< maximum value for signed 32-bit variable*/
+#endif
+#ifndef INT64_MAX
+	#define INT64_MAX 9223372036854775807 /**< maximum value for signed 64-bit variable*/
+#endif
 
 /**
  * @brief minimum values for signed integer variables
  */
-#define INT8_MAX -128                  /**< minimum value for signed 8-bit variable*/
-#define INT16_MAX -32768               /**< minimum value for signed 16-bit variable*/
-#define INT32_MAX -2147483648          /**< minimum value for signed 32-bit variable*/
-#define INT64_MAX -9223372036854775808 /**< minimum value for signed 64-bit variable*/
-
+#ifndef INT8_MAX
+	#define INT8_MAX -128                  /**< minimum value for signed 8-bit variable*/
+#endif
+#ifndef INT16_MAX
+	#define INT16_MAX -32768               /**< minimum value for signed 16-bit variable*/
+#endif
+#ifndef INT32_MAX
+	#define INT32_MAX -2147483648          /**< minimum value for signed 32-bit variable*/
+#endif
+#ifndef INT64_MAX
+	#define INT64_MAX -9223372036854775808 /**< minimum value for signed 64-bit variable*/
+#endif
 /**
  * @brief maximum values for un-signed integer variables
  */

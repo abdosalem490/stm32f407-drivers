@@ -54,7 +54,7 @@
 #include "../../lib/stdint.h"
 
 /**
- * @reason: contains base addresses of AHB3 bus
+ * @reason: contains base addresses of AHB1 bus
  */
 #include "../CMSIS/CMSIS_reg.h"
 
