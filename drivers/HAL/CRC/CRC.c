@@ -1,7 +1,7 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   Flash                                                                                                       |
- * |    @file           :   Flash_header.h                                                                                              |
+ * |    @title          :   CRC                                                                                                       |
+ * |    @file           :   CRC_header.h                                                                                              |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
  * |    @origin_date    :   01/08/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this header file contains useful functions to interface with the embedded flash memory inside stm32f407     |
+ * |    @brief          :   this header file contains useful functions to interface with the embedded CRC memory inside stm32f407     |
  * |                        common to cortex-M4 microprocessors with FPU.                                                               |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
@@ -67,24 +67,24 @@
 #include "../../Lib/math_btt.h"
 
 /**
- * @reason: contains all initial user configurations for flash
+ * @reason: contains all initial user configurations for CRC
  */
-#include "flash_config.h"
+#include "CRC_config.h"
 
 /**
  * @reason: contains all the interface functions to be implemented
  */
-#include "flash_header.h"
+#include "CRC_header.h"
 
 /**
- * @reason: contains all register addresses and bit definitions for embedded flash configuration registers
+ * @reason: contains all register addresses and bit definitions for embedded CRC configuration registers
  */
-#include "flash_reg.h"
+#include "CRC_reg.h"
 
 /**
  * @reason: contains all private function declaration and global variables
  */
-#include "flash_private.h"
+#include "CRC_private.h"
 
 /******************************************************************************
  * Module Preprocessor Constants
@@ -109,5 +109,35 @@
 /******************************************************************************
  * Function Definitions
  *******************************************************************************/
+
+/**
+ *
+ */
+HAL_CRC_ErrStates_t HAL_CRC_Encode(const uint32_t *argConst_pu32DataIn, uint32_t arg_u32DataLen, uint32_t *arg_pu32CRCValOut)
+{
+    // used local variables
+    HAL_CRC_ErrStates_t local_errState_t = HAL_CRC_OK;
+
+    // check for errors
+    if (argConst_pu32DataIn == NULL || arg_pu32CRCValOut == NULL)
+    {
+        local_errState_t = HAL_CRC_ERR_INVALID_PARAMS;
+    }
+
+    // main function
+    if (local_errState_t == HAL_CRC_OK)
+    {
+        LIB_MATH_BTT_SET_BIT(global_pCRCReg_t->CRC_CR, HAL_CRC_CR_RESET);
+        for (; arg_u32DataLen > 0; arg_u32DataLen--)
+        {
+            global_pCRCReg_t->CRC_DR = argConst_pu32DataIn;
+            argConst_pu32DataIn++;
+            arg_pu32CRCValOut = global_pCRCReg_t->CRC_DR;
+            arg_pu32CRCValOut++;
+        }
+    }
+
+    return local_errState_t;
+}
 
 /*************** END OF FUNCTIONS ***************************************************************************/

@@ -105,7 +105,7 @@
  * <hr>
  */
 #define HAL_CRC_STORE_TEMP_BYTE(arg_constu8ByteVal) \
-    LIB_MATH_BTT_ASSIGN_BITS(global_pCRCReg_t, HAL_CRC_INDEPENDET_DATA_REG, (uint8_t)arg_constu8ByteVal, 8)
+    LIB_MATH_BTT_ASSIGN_BITS(global_pCRCReg_t->CRC_IDR, HAL_CRC_INDEPENDET_DATA_REG, (uint8_t)arg_constu8ByteVal, 8)
 
 /**
  *  \b Macro                                :       HAL_CRC_GET_TEMP_BYTE()
@@ -136,7 +136,7 @@
  * <hr>
  */
 #define HAL_CRC_GET_TEMP_BYTE() \
-    LIB_MATH_BTT_GET_BITS(global_pCRCReg_t, HAL_CRC_INDEPENDET_DATA_REG, 8)
+    LIB_MATH_BTT_GET_BITS(global_pCRCReg_t->CRC_IDR, HAL_CRC_INDEPENDET_DATA_REG, 8)
 
 /******************************************************************************
  * Tables
