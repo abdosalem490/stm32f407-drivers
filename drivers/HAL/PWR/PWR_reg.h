@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   CMSIS                                                                                                       |
- * |    @file           :   CMSIS_header.h                                                                                              |
+ * |    @title          :   power controller                                                                                            |
+ * |    @file           :   PWR_reg.h                                                                                                   |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   15/07/2023                                                                                                  |
+ * |    @origin_date    :   11/08/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,8 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this is a header file for utility module which contains functions declarations and preprocessor Macros      |
- * |                        common to cortex-M4 microprocessors with FPU.                                                               |
+ * |    @brief          :   this file contains registers addresses and definitions structs that deals with PWR registers                |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -39,20 +38,64 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    11/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef CMSIS_HEADER_H_
-#define CMSIS_HEADER_H_
+#ifndef HAL_PWR_REG_H_
+#define HAL_PWR_REG_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
+/**
+ * @reason: contains standard definitions for the integer variables
+ */
+#include "../../lib/stdint.h"
+
+/**
+ * @reason: contains base addresses of APB1 bus
+ */
+#include "../CM4F/CM4F_reg.h"
+
+/**
+ * @reason: contains volatile keyword definition regarding selected compiler
+ */
+#include "../../lib/common.h"
 
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
+
+/**
+ * @brief: this is the base address of PWR registers used to configure some of the PWR behaviors
+ * @note: it will be referred to as @HAL_PWR_BASE_ADDR
+ */
+#define HAL_PWR_OFFSET 0x00007000 /**< this is the offset of the PWR register from APB1 bus base address*/
+
+/**
+ * @brief: bit position definitions for PWR_CR (PWR power control register)
+ */
+#define HAL_PWR_CR_LPDS 0 /**< Low-power deepsleep, This bit is set and cleared by software. It works together with the PDDS bit*/
+#define HAL_PWR_CR_PDDS 1 /**< Power-down deepsleep, This bit is set and cleared by software. It works together with the LPDS bit*/
+#define HAL_PWR_CR_CWUF 2 /**< Clear wakeup flag, This bit is always read as 0. Clear the WUF Wakeup Flag after 2 System clock cycles.*/
+#define HAL_PWR_CR_CSBF 3 /**< Clear standby flag, This bit is always read as 0. Clear the SBF Standby Flag (write).*/
+#define HAL_PWR_CR_PVDE 4 /**< Power voltage detector enable, This bit is set and cleared by software.*/
+#define HAL_PWR_CR_PLS 5  /**< PVD level selection, These bits are written by software to select the voltage threshold detected by the Power Voltage Detector*/
+#define HAL_PWR_CR_DBP 8  /**< Disable backup domain write protection, In reset state, the RCC_BDCR register, the RTC registers (including the backup registers), and the BRE bit of the PWR_CSR register, are protected against parasitic write access. This bit must be set to enable write access to these registers.*/
+#define HAL_PWR_CR_FPDS 9 /**< Flash power-down in Stop mode, When set, the Flash memory enters power-down mode when the device enters Stop mode. This allows to achieve a lower consumption in stop mode but a longer restart time.*/
+#define HAL_PWR_CR_VOS 14 /**< Regulator voltage scaling output selection, This bit controls the main internal voltage regulator output voltage to achieve a trade-off between performance and power consumption when the device does not operate at the maximum frequency*/
+
+/**
+ * @brief: bit position definitions for PWR_CSR (PWR power control/status register)
+ */
+#define HAL_PWR_CSR_WUF 0     /**< Wakeup flag, This bit is set by hardware and cleared either by a system reset or by setting the CWUF bit in the PWR_CR register.*/
+#define HAL_PWR_CSR_SBF 1     /**< Standby flag, This bit is set by hardware and cleared only by a POR/PDR (power-on reset/power-down reset) or by setting the CSBF bit in the PWR_CR register.*/
+#define HAL_PWR_CSR_PVDO 2    /**< PVD output, This bit is set and cleared by hardware. It is valid only if PVD is enabled by the PVDE bit. The PVD is stopped by Standby mode. For this reason, this bit is equal to 0 after Standby or reset until the PVDE bit is set.*/
+#define HAL_PWR_CSR_BRR 3     /**< Backup regulator ready, Set by hardware to indicate that the Backup Regulator is ready. This bit is not reset when the device wakes up from Standby mode or by a system reset or power reset.*/
+#define HAL_PWR_CSR_EWUP 8    /**< Enable WKUP pin, This bit is set and cleared by software. This bit is reset by a system reset.*/
+#define HAL_PWR_CSR_BRE 9     /**< Backup regulator enable, When set, the Backup regulator (used to maintain backup SRAM content in Standby and VBAT modes) is enabled. If BRE is reset, the backup regulator is switched off. The backup SRAM can still be used but its content will be lost in the Standby and VBAT modes. Once set, the application must wait that the Backup Regulator Ready flag (BRR) is set to indicate that the data written into the RAM will be maintained in the Standby and VBAT modes. Note: This bit is not reset when the device wakes up from Standby mode, by a system reset or by a power reset.*/
+#define HAL_PWR_CSR_VOSRDY 14 /**< Regulator voltage scaling output selection ready bit.*/
 
 /******************************************************************************
  * Configuration Constants
@@ -62,57 +105,27 @@
  * Macros
  *******************************************************************************/
 
-/**
- *  \b Macro                        :       HAL_CMSIS_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber)
- *  \b Description                  :       this macro is used to map each word in the alias region to a corresponding
- *                                          bit in the bit-band region using the formula:
- *                                          "bit_word_addr = bit_band_base + (byte_offset x 32) + (bit_number × 4)"
- *                                          where bit-band aliasing is useful is to preform read-modify-write operation in 1 cycle
- *                                          so that context switch wouldn't interrupt or affect updating a value.
- *  @param    bitBandBaseAddr       :       the starting address of the alias region.
- *  @param    byteOffset            :       the number of the byte in the bit-band region that contains the targeted bit.
- *  @param    bitNumber             :       the bit position (0-7) of the targeted bit.
- *  \b PRE-CONDITION                :       make sure that bitBandBaseAddr is base address of memory that supports bit band aliasing
- *  \b POST-CONDITION               :       None
- *  @return                         :       it return the alias address of needed bit in the bit band region
- *  @see                            :       None
- *
- *  \b Example:
- * The following example shows how to map bit 2 of the byte located at SRAM address 0x20000300 to the alias region:
- *         0x22006008 = 0x22000000 + (0x300*32) + (2*4)
- * Writing to address 0x22006008 has the same effect as a read-modify-write operation on bit 2 of the byte at SRAM address 0x20000300.
- * Reading address 0x22006008 returns the value (0x01 or 0x00) of bit 2 of the byte at SRAM address 0x20000300 (0x01: bit set; 0x00: bit reset)
- * For more information on bit-banding, please refer to the Cortex®-M4 with FPU programming manual.
- * @code
- * #include "CMSIS_header.h"
- * int main() {
- * int addr = HAL_CMSIS_BIT_BAND_ALIAS_ADDR(0x22000000, 0x300, 2);
- * printf("%x\n", addr);    // addr = 0x22006008
- * return 0;
- * }
- * @endcode
- *
- * <br><b> - HISTORY OF CHANGES - </b>
- * <table align="left" style="width:800px">
- * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
- * <tr><td> 15/07/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
- * </table><br><br>
- * <hr>
- */
-#define HAL_CMSIS_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber) \
-    ((bitBandBaseAddr) + (32 * byteOffset) + (bitNumber * 4))
-
 /******************************************************************************
  * Typedefs
  *******************************************************************************/
 
+/**
+ * @brief: this holds all registers used to configure embedded PWR
+ */
+typedef struct
+{
+    __io uint32_t PWR_CR;  /**< PWR power control register.*/
+    __io uint32_t PWR_CSR; /**< PWR power control/status register*/
+} HAL_PWR_RegDef_t;
+
 /******************************************************************************
  * Variables
  *******************************************************************************/
+__io HAL_PWR_RegDef_t *global_pPWRReg_t = ((HAL_PWR_RegDef_t *)(HAL_CMSIS_APB1_BASEADDR + HAL_PWR_OFFSET)); /**< this is a pointer variable through which we will access our PWR registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*CMSIS_HEADER_H_*/
+#endif /*HAL_PWR_REG_H_*/

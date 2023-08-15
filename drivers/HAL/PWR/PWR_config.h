@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   CMSIS                                                                                                       |
- * |    @file           :   CMSIS_reg.h                                                                                              	|
+ * |    @title          :   power controller                                                                                            |
+ * |    @file           :   PWR_config.h                                                                                                |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   17/07/2023                                                                                                  |
+ * |    @origin_date    :   11/08/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains register addresses of arm cortex m4 with FPU and bus base addresses                      |
+ * |    @brief          :   this header file contains configurations related to the Power Controller (PWR)                              |                                                               |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,37 +38,30 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       file Created.                                              		|
+ * |    11/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef CMSIS_REG_H_
-#define CMSIS_REG_H_
+#ifndef HAL_PWR_CONFIG_H_
+#define HAL_PWR_CONFIG_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
 
+/**
+ * @reason: it contains standard definition for integers
+ */
+#include "../../lib/stdint.h"
+
+/**
+ * @reason: it holds the definitions for (ENABLED and DISABLED)
+ */
+#include "../../lib/constants.h"
+
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
-
-/**
- * @brief: these are buses base addresses, will be referred to as @HAL_CMSIS_BUSES_BASE_ADDR
- */
-#define HAL_CMSIS_AHB3_BASEADDR 0x60000000 /**< boundary address = 0x6000 0000 - 0xA000 0FFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB2_BASEADDR 0x50000000 /**< boundary address = 0x5000 0000 - 0x5006 0BFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_AHB1_BASEADDR 0x40020000 /**< boundary address = 0x4002 0000 - 0x4007 FFFF where this bus is advanced high performance bus */
-#define HAL_CMSIS_APB2_BASEADDR 0x40010000 /**< boundary address = 0x4001 0000 - 0x4001 57FF where this bus is advanced peripheral bus */
-#define HAL_CMSIS_APB1_BASEADDR 0x40000000 /**< boundary address = 0x4000 0000 - 0x4000 7FFF where this bus is advanced peripheral bus */
-
-/**
- * @brief: these are some common peripherals base addresses
- */
-#define HAL_CMSIS_FLASH_BASE_ADDR 0x08000000	/**< base address of the flash memory, size = 1 Megabyte*/
-#define HAL_CMSIS_SRAM1_BASE_ADDR 0x20000000	/**< base address of the sram1 memory, size = 112 KiloByte*/
-#define HAL_CMSIS_SRAM2_BASE_ADDR 0x2001C000	/**< base address of the sram2 memory, size = 16 KiloByte*/
-#define HAL_CMSIS_CCM_SRAM_BASE_ADDR 0x10000000 /**< base address of the core coupled sram memory, size = 64 KiloByte*/
 
 /******************************************************************************
  * Configuration Constants
@@ -79,16 +72,78 @@
  *******************************************************************************/
 
 /******************************************************************************
+ * Tables
+ *******************************************************************************/
+
+/******************************************************************************
  * Typedefs
  *******************************************************************************/
+
+/**
+ * @enum: HAL_PWR_HCLK_MAX_FREQ_t
+ * @brief: holds scaling configuration for voltage regulator ouput, higher max speed means higher power consumption
+ */
+typedef enum
+{
+    HAL_PWR_HCLK_144_MHZ = 0, /**< this means the maximum reachable Internal AHB clock frequency = 144 MHZ but it means lower power consumption*/
+    HAL_PWR_HCLK_168_MHZ = 1, /**< this means the maximum reachable Internal AHB clock frequency = 168 MHZ but it means higher power consumption*/
+    HAL_PWR_MAX_HCLK,         /**< this value shall never be used by the user, it's only used by the implementation code to verify the input*/
+} HAL_PWR_HCLK_MAX_FREQ_t;
+
+/**
+ *  @enum: HAL_PWR_PVDLevelSelection_t
+ * @brief: used to select voltage threshold of VDD upon it generates interrupt if level is higher or lower than the selected level
+ */
+typedef enum
+{
+    HAL_PWR_PVD_2_0_V = 0, /**< voltage threshold is set to 2.0 Volt*/
+    HAL_PWR_PVD_2_1_V = 1, /**< voltage threshold is set to 2.1 Volt*/
+    HAL_PWR_PVD_2_3_V = 2, /**< voltage threshold is set to 2.3 Volt*/
+    HAL_PWR_PVD_2_5_V = 3, /**< voltage threshold is set to 2.5 Volt*/
+    HAL_PWR_PVD_2_6_V = 4, /**< voltage threshold is set to 2.6 Volt*/
+    HAL_PWR_PVD_2_7_V = 5, /**< voltage threshold is set to 2.7 Volt*/
+    HAL_PWR_PVD_2_8_V = 6, /**< voltage threshold is set to 2.8 Volt*/
+    HAL_PWR_PVD_2_9_V = 7, /**< voltage threshold is set to 2.9 Volt*/
+    HAL_PWR_MAX_PVD_LEVEL, /**< this value shall never be used by the user, it's only used by the implementation code to verify the input*/
+} HAL_PWR_PVDLevelSelection_t;
+
+/**
+ * @struct: HAL_PWR_generalConfig_t
+ * @brief: for some reasons, the configuration registers of flash has some effect on other different peripherals, so configuration for these unrelated peripherals are gathered here
+ */
+typedef struct
+{
+    uint8_t MaxHCLKFreq;     /**< for possible values refer to @HAL_PWR_HCLK_MAX_FREQ_t in "PWR_config.h", this only indicates the maximum reachable clock frequency when the device does not operate at the maximum frequency. it achieves a trade-off between performance and power consumption.*/
+    uint8_t FlashPowerDown;  /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to control whether flash memory enters power-down mode when the device enters Stop mode. This allows to achieve a lower consumption in stop mode but a longer restart time.*/
+    uint8_t PVDEnable;       /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", Power voltage detector enable */
+    uint8_t PVDLevel;        /**< for possible values refer to @HAL_PWR_PVDLevelSelection_t in "PWR_config.h", only used if PVDEnable is enabled.  select the voltage threshold detected by the Power Voltage Detector */
+    uint8_t BackUpEnable;    /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", this is used to enable backup SRAM to maintain its content in V_bat mode*/
+    uint8_t WakeUpPinEnable; /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to configure wake up to be used only to wake up MCU from standby mode*/
+} HAL_PWR_generalConfig_t;
 
 /******************************************************************************
  * Variables
  *******************************************************************************/
+
+/**
+ * @user_todo: user shall edit this array with his needed configurations
+ * @brief: it represents the configurations for anything related to power consumption
+ */
+const HAL_PWR_generalConfig_t globalConstArr_PWRConfig_t[] = {
+    {
+        .MaxHCLKFreq = HAL_PWR_HCLK_168_MHZ,
+        .FlashPowerDown = LIB_CONSTANTS_ENABLED,
+        .PVDEnable = LIB_CONSTANTS_DISABLED,
+        .PVDLevel = HAL_PWR_PVD_2_0_V,
+        .BackUpEnable = LIB_CONSTANTS_ENABLED,
+
+    }
+
+};
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*CMSIS_REG_H_*/
+#endif /*HAL_PWR_CONFIG_H_*/

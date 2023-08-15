@@ -56,7 +56,7 @@
 /**
  * @reason: contains base addresses of AHB1 bus
  */
-#include "../CMSIS/CMSIS_reg.h"
+#include "../CM4F/CM4F_reg.h"
 
 /**
  * @reason: contains volatile keyword definition regarding selected compiler

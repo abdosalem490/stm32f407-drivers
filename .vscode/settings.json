@@ -1,6 +1,7 @@
 {
   "C_Cpp.errorSquiggles": "disabled",
   "files.associations": {
-    "stdint.h": "c"
+    "stdint.h": "c",
+    "cm4f_reg.h": "c"
   }
 }

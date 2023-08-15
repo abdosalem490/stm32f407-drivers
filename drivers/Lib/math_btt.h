@@ -39,6 +39,7 @@
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
  * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    13/08/2023      1.0.1           Abdelrahman Mohamed Salem       solved bug -: LIB_MATH_BTT_ASSIGN_BITS.                         |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
@@ -334,11 +335,12 @@
  * <table align="left" style="width:800px">
  * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
  * <tr><td> 25/07/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * <tr><td> 13/08/2023 </td><td> 1.0.1            </td><td> AMS      </td><td> solved bug -: VAL being assigned all to part of VAR </td></tr>
  * </table><br><br>
  * <hr>
  */
 #define LIB_MATH_BTT_ASSIGN_BITS(VAR, BTT_NO, VAL, NUM_OF_BITS) \
-    VAR = ((VAR) & (~((LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO)))) | (((VAL) << (BTT_NO)))
+    VAR = ((VAR) & (~((LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS)) << (BTT_NO)))) | ((((VAL) & (LIB_MATH_BTT_DECODE_TO_ONES(NUM_OF_BITS))) << (BTT_NO)))
 
 /**
  *  \b Macro                        :       LIB_MATH_BTT_SET_BIT(VAR, BTT_NO)

@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   crc                                                                                                         |
- * |    @file           :   CRC_reg.h                                                                                                   |
+ * |    @title          :   power controller                                                                                            |
+ * |    @file           :   PWR_header.h                                                                                                |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   11/08/2023                                                                                                  |
+ * |    @origin_date    :   12/08/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains registers addresses and definitions structs that deals with CRC registers                |
+ * |    @brief          :   this header file contains functions implementations regarding the embedded embedded power controller        |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,80 +38,82 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    11/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    12/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
-
-#ifndef HAL_CRC_REG_H_
-#define HAL_CRC_REG_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
 /**
- * @reason: contains standard definitions for the variables
+ * @reason: contains standard definitions for standard integers
  */
 #include "../../lib/stdint.h"
 
 /**
- * @reason: contains base addresses of AHB1 bus
- */
-#include "../CM4F/CM4F_reg.h"
-
-/**
- * @reason: contains volatile keyword definition regarding selected compiler
+ * @reason: contains definition for NULL
  */
 #include "../../lib/common.h"
 
-/******************************************************************************
- * Preprocessor Constants
- *******************************************************************************/
+/**
+ * @reason: contains constants common values
+ */
+#include "../../lib/constants.h"
 
 /**
- * @brief: this is the base address of CRC registers used to configure some of the CRC behaviors
- * @note: it will be referred to as @HAL_CRC_BASE_ADDR
+ * @reason: contains useful functions that deals with bit level math
  */
-#define HAL_CRC_OFFSET 0x00003000 /**< this is the offset of the CRC register from AHB1 bus base address*/
+#include "../../Lib/math_btt.h"
 
 /**
- * @brief: bit position definitions for CRC_IDR (CRC Independent data register)
+ * @reason: contains all initial user configurations for PWR
  */
-#define HAL_CRC_INDEPENDET_DATA_REG 0 /**< temporary data register for temporary memory*/
-/**
- * @brief: bit position definitions for CRC_CR (CRC Control register)
- */
-#define HAL_CRC_CR_RESET 0 /**< RESET bit,  Resets the CRC calculation unit and sets the data register to 0xFFFF FFFF. This bit can only be set, it is automatically cleared by hardware.*/
-
-/******************************************************************************
- * Configuration Constants
- *******************************************************************************/
-
-/******************************************************************************
- * Macros
- *******************************************************************************/
-
-/******************************************************************************
- * Typedefs
- *******************************************************************************/
+#include "PWR_config.h"
 
 /**
- * @brief: this holds all registers used to configure embedded CRC
+ * @reason: contains all the interface functions to be implemented
  */
-typedef struct
-{
-    __io uint32_t CRC_DR;  /**< Used as an input register when writing new data into the CRC calculator. Holds the previous CRC calculation result when it is read.*/
-    __io uint32_t CRC_IDR; /**< contains independent data register for temporary memory not affected by reset*/
-    __io uint32_t CRC_CR;  /**< just constains reset bit that resets CRC for additional operation*/
-} HAL_CRC_RegDef_t;
+#include "PWR_header.h"
+
+/**
+ * @reason: contains all register addresses and bit definitions for embedded PWR configuration registers
+ */
+#include "PWR_reg.h"
+
+/**
+ * @reason: contains all private function declaration and global variables
+ */
+#include "PWR_private.h"
 
 /******************************************************************************
- * Variables
+ * Module Preprocessor Constants
  *******************************************************************************/
-__io HAL_CRC_RegDef_t *global_pCRCReg_t = ((HAL_CRC_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_CRC_OFFSET)); /**< this is a pointer variable through which we will access our CRC registers to configure them*/
+
+/******************************************************************************
+ * Module Preprocessor Macros
+ *******************************************************************************/
+
+/******************************************************************************
+ * Module Typedefs
+ *******************************************************************************/
+
+/******************************************************************************
+ * Module Variable Definitions
+ *******************************************************************************/
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
-/*** End of File **************************************************************/
-#endif /*HAL_CRC_REG_H_*/
+/******************************************************************************
+ * Function Definitions
+ *******************************************************************************/
+
+/**
+ * @brief: interrupt handler for PVD, to indicate if VDD is higher or lower than the PVD threshold.
+ */
+void PVD_IRQHandler(void)
+{
+}
+
+/*************** END OF FUNCTIONS ***************************************************************************/

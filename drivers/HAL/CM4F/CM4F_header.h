@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   crc                                                                                                         |
- * |    @file           :   CRC_reg.h                                                                                                   |
+ * |    @title          :   CM4F                                                                                                        |
+ * |    @file           :   CM4F_header.h                                                                                               |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   11/08/2023                                                                                                  |
+ * |    @origin_date    :   15/07/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,8 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains registers addresses and definitions structs that deals with CRC registers                |
+ * |    @brief          :   this is a header file for utility module which contains functions declarations and preprocessor Macros      |
+ * |                        common to cortex-M4 microprocessors with FPU.                                                               |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,49 +39,20 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    11/08/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    15/07/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef HAL_CRC_REG_H_
-#define HAL_CRC_REG_H_
+#ifndef CM4F_HEADER_H_
+#define CM4F_HEADER_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
-/**
- * @reason: contains standard definitions for the variables
- */
-#include "../../lib/stdint.h"
-
-/**
- * @reason: contains base addresses of AHB1 bus
- */
-#include "../CM4F/CM4F_reg.h"
-
-/**
- * @reason: contains volatile keyword definition regarding selected compiler
- */
-#include "../../lib/common.h"
 
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
-
-/**
- * @brief: this is the base address of CRC registers used to configure some of the CRC behaviors
- * @note: it will be referred to as @HAL_CRC_BASE_ADDR
- */
-#define HAL_CRC_OFFSET 0x00003000 /**< this is the offset of the CRC register from AHB1 bus base address*/
-
-/**
- * @brief: bit position definitions for CRC_IDR (CRC Independent data register)
- */
-#define HAL_CRC_INDEPENDET_DATA_REG 0 /**< temporary data register for temporary memory*/
-/**
- * @brief: bit position definitions for CRC_CR (CRC Control register)
- */
-#define HAL_CRC_CR_RESET 0 /**< RESET bit,  Resets the CRC calculation unit and sets the data register to 0xFFFF FFFF. This bit can only be set, it is automatically cleared by hardware.*/
 
 /******************************************************************************
  * Configuration Constants
@@ -90,28 +62,57 @@
  * Macros
  *******************************************************************************/
 
+/**
+ *  \b Macro                        :       HAL_CM4F_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber)
+ *  \b Description                  :       this macro is used to map each word in the alias region to a corresponding
+ *                                          bit in the bit-band region using the formula:
+ *                                          "bit_word_addr = bit_band_base + (byte_offset x 32) + (bit_number × 4)"
+ *                                          where bit-band aliasing is useful is to preform read-modify-write operation in 1 cycle
+ *                                          so that context switch wouldn't interrupt or affect updating a value.
+ *  @param    bitBandBaseAddr       :       the starting address of the alias region.
+ *  @param    byteOffset            :       the number of the byte in the bit-band region that contains the targeted bit.
+ *  @param    bitNumber             :       the bit position (0-7) of the targeted bit.
+ *  \b PRE-CONDITION                :       make sure that bitBandBaseAddr is base address of memory that supports bit band aliasing
+ *  \b POST-CONDITION               :       None
+ *  @return                         :       it return the alias address of needed bit in the bit band region
+ *  @see                            :       None
+ *
+ *  \b Example:
+ * The following example shows how to map bit 2 of the byte located at SRAM address 0x20000300 to the alias region:
+ *         0x22006008 = 0x22000000 + (0x300*32) + (2*4)
+ * Writing to address 0x22006008 has the same effect as a read-modify-write operation on bit 2 of the byte at SRAM address 0x20000300.
+ * Reading address 0x22006008 returns the value (0x01 or 0x00) of bit 2 of the byte at SRAM address 0x20000300 (0x01: bit set; 0x00: bit reset)
+ * For more information on bit-banding, please refer to the Cortex®-M4 with FPU programming manual.
+ * @code
+ * #include "CM4F_header.h"
+ * int main() {
+ * int addr = HAL_CM4F_BIT_BAND_ALIAS_ADDR(0x22000000, 0x300, 2);
+ * printf("%x\n", addr);    // addr = 0x22006008
+ * return 0;
+ * }
+ * @endcode
+ *
+ * <br><b> - HISTORY OF CHANGES - </b>
+ * <table align="left" style="width:800px">
+ * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
+ * <tr><td> 15/07/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * </table><br><br>
+ * <hr>
+ */
+#define HAL_CM4F_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber) \
+    ((bitBandBaseAddr) + (32 * byteOffset) + (bitNumber * 4))
+
 /******************************************************************************
  * Typedefs
  *******************************************************************************/
 
-/**
- * @brief: this holds all registers used to configure embedded CRC
- */
-typedef struct
-{
-    __io uint32_t CRC_DR;  /**< Used as an input register when writing new data into the CRC calculator. Holds the previous CRC calculation result when it is read.*/
-    __io uint32_t CRC_IDR; /**< contains independent data register for temporary memory not affected by reset*/
-    __io uint32_t CRC_CR;  /**< just constains reset bit that resets CRC for additional operation*/
-} HAL_CRC_RegDef_t;
-
 /******************************************************************************
  * Variables
  *******************************************************************************/
-__io HAL_CRC_RegDef_t *global_pCRCReg_t = ((HAL_CRC_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_CRC_OFFSET)); /**< this is a pointer variable through which we will access our CRC registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
 
 /*** End of File **************************************************************/
-#endif /*HAL_CRC_REG_H_*/
+#endif /*CM4F_HEADER_H_*/
