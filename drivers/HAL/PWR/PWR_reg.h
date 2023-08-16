@@ -121,7 +121,7 @@ typedef struct
 /******************************************************************************
  * Variables
  *******************************************************************************/
-__io HAL_PWR_RegDef_t *global_pPWRReg_t = ((HAL_PWR_RegDef_t *)(HAL_CMSIS_APB1_BASEADDR + HAL_PWR_OFFSET)); /**< this is a pointer variable through which we will access our PWR registers to configure them*/
+static __io HAL_PWR_RegDef_t *global_pPWRReg_t = ((HAL_PWR_RegDef_t *)(HAL_CM4F_APB1_BASEADDR + HAL_PWR_OFFSET)); /**< this is a pointer variable through which we will access our PWR registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes

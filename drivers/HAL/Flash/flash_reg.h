@@ -178,7 +178,7 @@ typedef struct
 /******************************************************************************
  * Variables
  *******************************************************************************/
-__io HAL_FLASH_RegDef_t *global_pFlashReg_t = ((HAL_FLASH_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_FLASH_INTERFACE_OFFSET)); /**< this is a pointer variable through which we will access our flash registers to configure them*/
+__io HAL_FLASH_RegDef_t *global_pFlashReg_t = ((HAL_FLASH_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_FLASH_INTERFACE_OFFSET)); /**< this is a pointer variable through which we will access our flash registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes

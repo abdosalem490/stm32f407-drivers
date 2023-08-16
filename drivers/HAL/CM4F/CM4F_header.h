@@ -102,6 +102,67 @@
 #define HAL_CM4F_BIT_BAND_ALIAS_ADDR(bitBandBaseAddr, byteOffset, bitNumber) \
     ((bitBandBaseAddr) + (32 * byteOffset) + (bitNumber * 4))
 
+/**
+ *  \b Macro                        :       HAL_CM4F_WAIT_FOR_INTERRUPT()
+ *  \b Description                  :       this macro is used to put MCU in sleep state waiting for interrupt, it suspends execution until one of the following events occurs:
+ *                                              ->  An exception.
+ *                                              ->  A Debug Entry request, regardless of whether Debug is enabled.
+ *  \b PRE-CONDITION                :       make sure that no interrupt/event is pending.
+ *  \b POST-CONDITION               :       MCU enters sleep or stop or standby mode depending on other configurations.
+ *  @return                         :       None.
+ *  @see                            :       None.
+ *
+ *  \b Example:
+ * @code
+ * #include "CM4F_header.h"
+ * int main() {
+ * HAL_CM4F_WAIT_FOR_INTERRUPT(); // MCU waits for interrupt/exception to occur
+ * return 0;
+ * }
+ * @endcode
+ *
+ * <br><b> - HISTORY OF CHANGES - </b>
+ * <table align="left" style="width:800px">
+ * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
+ * <tr><td> 16/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * </table><br><br>
+ * <hr>
+ */
+#define HAL_CM4F_WAIT_FOR_INTERRUPT() \
+    __asm__("WFI")
+
+/**
+ *  \b Macro                        :       HAL_CM4F_WAIT_FOR_EVENT()
+ *  \b Description                  :       this macro is used to put MCU in sleep state waiting for interrupt, it suspends execution until one of the following events occurs:
+ *                                              ->  An exception, unless masked by exception mask registers or the current priority level.
+ *                                              ->  An exception enters Pending state, if SEVONPEND in System Control Register is set.
+ *                                              ->  A Debug Entry request, if Debug is enabled.
+ *                                              ->  An event signaled by a peripheral or another processor in a multiprocessor system using the SEV instruction.
+ *  \b PRE-CONDITION                :       make sure that no interrupt/event is pending.
+ *  \b POST-CONDITION               :       MCU enters sleep or stop or standby mode depending on other configurations.
+ *  @return                         :       None.
+ *  @see                            :       None.
+ *  @note:                          :       If the event register is 1, WFE clears it to 0 and returns immediately.
+ *
+ *  \b Example:
+ * @code
+ * #include "CM4F_header.h"
+ * int main() {
+ * HAL_CM4F_WAIT_FOR_EVENT(); // MCU waits for interrupt/exception to occur
+ * return 0;
+ * }
+ * @endcode
+ *
+ * <br><b> - HISTORY OF CHANGES - </b>
+ * <table align="left" style="width:800px">
+ * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
+ * <tr><td> 16/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * </table><br><br>
+ * <hr>
+ */
+#define HAL_CM4F_WAIT_FOR_EVENT() \
+    __asm__("WFE")
+
 /******************************************************************************
  * Typedefs
  *******************************************************************************/

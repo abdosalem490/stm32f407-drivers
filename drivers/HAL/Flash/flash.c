@@ -365,10 +365,10 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Write(const uint32_t argConst_u32BaseAddress, ui
     if (local_errState_t == HAL_FLASH_OK)
     {
         // assign some values
-        global_pu8MemWriteVar = ((uint8_t *)argConst_u32BaseAddress & (~0x0));
-        global_pu16MemWriteVar = ((uint16_t *)argConst_u32BaseAddress & (~0x1));
-        global_pu32MemWriteVar = ((uint32_t *)argConst_u32BaseAddress & (~0x3));
-        global_pu64MemWriteVar = ((uint64_t *)argConst_u32BaseAddress & (~0x6));
+        global_pu8MemWriteVar = (uint8_t *)(argConst_u32BaseAddress & (~0x0));
+        global_pu16MemWriteVar = (uint16_t *)(argConst_u32BaseAddress & (~0x1));
+        global_pu32MemWriteVar = (uint32_t *)(argConst_u32BaseAddress & (~0x3));
+        global_pu64MemWriteVar = (uint64_t *)(argConst_u32BaseAddress & (~0x7));
 
         // check for type of operation
         if (global_u8BehaviorType == HAL_FLASH_CONFIG_VAL_OPERATION_TYPE_BLOCKING)

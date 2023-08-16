@@ -126,17 +126,17 @@ static uint8_t global_u8SuccessOperationState = LIB_CONSTANTS_FAIL;
 /**
  * @brief: these four pointer are used for different access type of flash memory according to program size
  */
-uint8_t *global_pu8MemWriteVar = NULL;   /**< used for byte access*/
-uint16_t *global_pu16MemWriteVar = NULL; /**< used for half-word access*/
-uint32_t *global_pu32MemWriteVar = NULL; /**< used for word access*/
-uint64_t *global_pu64MemWriteVar = NULL; /**< used for double-word access*/
+static uint8_t *global_pu8MemWriteVar = NULL;   /**< used for byte access*/
+static uint16_t *global_pu16MemWriteVar = NULL; /**< used for half-word access*/
+static uint32_t *global_pu32MemWriteVar = NULL; /**< used for word access*/
+static uint64_t *global_pu64MemWriteVar = NULL; /**< used for double-word access*/
 
 /**
  * @brief: these variables are used to keep track of the flash write in interrupt mode
  */
-const uint8_t *globalConst_pu8WriteData = NULL; /**< this is the pointer that points to data to be written in interrupt mode*/
-uint32_t global_u32DataLen = 0;                 /**< this is the length of data to be written in bytes used in flash write in interrupt mode*/
-uint8_t global_u8WriteData = 0;                 /**< this is the data to be written in case of function Fill*/
+static const uint8_t *globalConst_pu8WriteData = NULL; /**< this is the pointer that points to data to be written in interrupt mode*/
+static uint32_t global_u32DataLen = 0;                 /**< this is the length of data to be written in bytes used in flash write in interrupt mode*/
+static uint8_t global_u8WriteData = 0;                 /**< this is the data to be written in case of function Fill*/
 
 /**
  * @brief: this variable is used to keep track which operation to be done in interrupt handler

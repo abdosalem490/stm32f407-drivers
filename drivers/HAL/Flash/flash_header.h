@@ -252,8 +252,8 @@ typedef enum
 } HAL_FLASH_OTP_Blocks_t;
 
 /**
- * @enum: HAL_FLASH_OTP_Blocks_t
- * @brief: constants used to tell functions which block from OTP we will be dealing with, refer to @HAL_FLASH_BASEADDR in "flash_header.h" to see the base address and spaces for each memory
+ * @enum: HAL_FLASH_CallbacksTypes_t
+ * @brief: constants used to as key to register a callback when a specific even happens
  */
 typedef enum
 {

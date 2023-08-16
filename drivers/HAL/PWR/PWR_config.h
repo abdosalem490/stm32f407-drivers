@@ -59,6 +59,11 @@
  */
 #include "../../lib/constants.h"
 
+/**
+ * @reason: hold possible values for SleepEnterMethod
+ */
+#include "PWR_header.h"
+
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
@@ -113,12 +118,14 @@ typedef enum
  */
 typedef struct
 {
-    uint8_t MaxHCLKFreq;     /**< for possible values refer to @HAL_PWR_HCLK_MAX_FREQ_t in "PWR_config.h", this only indicates the maximum reachable clock frequency when the device does not operate at the maximum frequency. it achieves a trade-off between performance and power consumption.*/
-    uint8_t FlashPowerDown;  /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to control whether flash memory enters power-down mode when the device enters Stop mode. This allows to achieve a lower consumption in stop mode but a longer restart time.*/
-    uint8_t PVDEnable;       /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", Power voltage detector enable */
-    uint8_t PVDLevel;        /**< for possible values refer to @HAL_PWR_PVDLevelSelection_t in "PWR_config.h", only used if PVDEnable is enabled.  select the voltage threshold detected by the Power Voltage Detector */
-    uint8_t BackUpEnable;    /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", this is used to enable backup SRAM to maintain its content in V_bat mode*/
-    uint8_t WakeUpPinEnable; /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to configure wake up to be used only to wake up MCU from standby mode*/
+    uint8_t MaxHCLKFreq;              /**< for possible values refer to @HAL_PWR_HCLK_MAX_FREQ_t in "PWR_config.h", this only indicates the maximum reachable clock frequency when the device does not operate at the maximum frequency. it achieves a trade-off between performance and power consumption.*/
+    uint8_t FlashPowerDown;           /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to control whether flash memory enters power-down mode when the device enters Stop mode. This allows to achieve a lower consumption in stop mode but a longer restart time.*/
+    uint8_t PVDEnable;                /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", Power voltage detector enable */
+    uint8_t PVDLevel;                 /**< for possible values refer to @HAL_PWR_PVDLevelSelection_t in "PWR_config.h", only used if PVDEnable is enabled.  select the voltage threshold detected by the Power Voltage Detector */
+    uint8_t BackUpEnable;             /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", this is used to enable backup SRAM to maintain its content in V_bat mode*/
+    uint8_t WakeUpPinEnable;          /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to configure wake up to be used only to wake up MCU from standby mode*/
+    uint8_t SleepEnterMethod;         /**< for possible values refer to @HAL_PWR_VAL_SleepMethod_t in "PWR_header.h", it indicates how the MCU shall enter the sleep mode. */
+    uint8_t SleepOnExitFromISREnable; /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", it indicates whether to enable or disable sleeping on exit from ISR*/
 } HAL_PWR_generalConfig_t;
 
 /******************************************************************************
@@ -127,7 +134,7 @@ typedef struct
 
 /**
  * @user_todo: user shall edit this array with his needed configurations
- * @brief: it represents the configurations for anything related to power consumption
+ * @brief: it represents the configurations for anything related to power consumption, these are the default values
  */
 const HAL_PWR_generalConfig_t globalConstArr_PWRConfig_t[] = {
     {
@@ -136,7 +143,8 @@ const HAL_PWR_generalConfig_t globalConstArr_PWRConfig_t[] = {
         .PVDEnable = LIB_CONSTANTS_DISABLED,
         .PVDLevel = HAL_PWR_PVD_2_0_V,
         .BackUpEnable = LIB_CONSTANTS_ENABLED,
-
+        .SleepEnterMethod = HAL_PWR_VAL_SLEEP_METHOD_WFE,
+        .SleepOnExitFromISREnable = LIB_CONSTANTS_ENABLED,
     }
 
 };

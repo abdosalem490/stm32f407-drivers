@@ -338,8 +338,8 @@ typedef struct
 /**
  * @brief: pointers through which we will access our registers
  */
-__io HAL_CM4F_SCBRegDef_t *global_pSCBReg_t = (HAL_CM4F_SCBRegDef_t *)HAL_CM4F_SCB_BASE_ADDR;
-__io uint32_t *global_pu32ACTLRreg_t = (uint32_t *)HAL_CM4F_ACTLR_BASE_ADDR;
+static __io HAL_CM4F_SCBRegDef_t *global_pSCBReg_t = (HAL_CM4F_SCBRegDef_t *)HAL_CM4F_SCB_BASE_ADDR;
+static __io uint32_t *global_pu32ACTLRreg_t = (uint32_t *)HAL_CM4F_ACTLR_BASE_ADDR;
 
 /******************************************************************************
  * Function Prototypes

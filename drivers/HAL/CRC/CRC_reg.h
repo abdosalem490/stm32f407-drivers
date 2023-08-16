@@ -107,7 +107,7 @@ typedef struct
 /******************************************************************************
  * Variables
  *******************************************************************************/
-__io HAL_CRC_RegDef_t *global_pCRCReg_t = ((HAL_CRC_RegDef_t *)(HAL_CMSIS_AHB1_BASEADDR + HAL_CRC_OFFSET)); /**< this is a pointer variable through which we will access our CRC registers to configure them*/
+__io HAL_CRC_RegDef_t *global_pCRCReg_t = ((HAL_CRC_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_CRC_OFFSET)); /**< this is a pointer variable through which we will access our CRC registers to configure them*/
 
 /******************************************************************************
  * Function Prototypes
