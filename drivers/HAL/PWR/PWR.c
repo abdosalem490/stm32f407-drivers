@@ -157,6 +157,7 @@ HAL_PWR_ErrStates_t HAL_PWR_Init()
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_PWR_CR_FPDS, globalConstArr_PWRConfig_t[0].FlashPowerDown);
         LIB_MATH_BTT_ASSIGN_BITS(local_u32TempReg, HAL_PWR_CR_PLS, globalConstArr_PWRConfig_t[0].PVDLevel, 3);
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_PWR_CR_PVDE, globalConstArr_PWRConfig_t[0].PVDEnable);
+        LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_PWR_CR_LPDS, globalConstArr_PWRConfig_t[0].RegulatorPowerDown);
         global_pPWRReg_t->PWR_CR = local_u32TempReg;
 
         // configure PWR power control/status register (PWR_CSR)
@@ -214,11 +215,38 @@ HAL_PWR_ErrStates_t HAL_PWR_EnterMode(const uint8_t argConst_u8Mode)
         else if (argConst_u8Mode == HAL_MODE_STOP)
         {
             HAL_CM4F_CONFIGURE_SLEEPDEEP(LIB_CONSTANTS_ENABLED);
-            
+            LIB_MATH_BTT_CLR_BIT(global_pPWRReg_t->PWR_CR, HAL_PWR_CR_PDDS);
+            if (global_u8SleepMethod == HAL_PWR_VAL_SLEEP_METHOD_WFE)
+            {
+                HAL_CM4F_WAIT_FOR_EVENT();
+            }
+            else if (global_u8SleepMethod == HAL_PWR_VAL_SLEEP_METHOD_WFI)
+            {
+                HAL_CM4F_WAIT_FOR_INTERRUPT();
+            }
+            else
+            {
+                // do nothing
+            }
         }
         else if (argConst_u8Mode == HAL_MODE_STANDBY)
         {
-            /* code */
+            HAL_CM4F_CONFIGURE_SLEEPDEEP(LIB_CONSTANTS_ENABLED);
+            LIB_MATH_BTT_SET_BIT(global_pPWRReg_t->PWR_CR, HAL_PWR_CR_PDDS);
+            LIB_MATH_BTT_SET_BIT(global_pPWRReg_t->PWR_CR, HAL_PWR_CR_CWUF);
+
+            if (global_u8SleepMethod == HAL_PWR_VAL_SLEEP_METHOD_WFE)
+            {
+                HAL_CM4F_WAIT_FOR_EVENT();
+            }
+            else if (global_u8SleepMethod == HAL_PWR_VAL_SLEEP_METHOD_WFI)
+            {
+                HAL_CM4F_WAIT_FOR_INTERRUPT();
+            }
+            else
+            {
+                // do nothing
+            }
         }
         else
         {

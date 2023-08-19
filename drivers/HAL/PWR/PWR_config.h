@@ -120,6 +120,7 @@ typedef struct
 {
     uint8_t MaxHCLKFreq;              /**< for possible values refer to @HAL_PWR_HCLK_MAX_FREQ_t in "PWR_config.h", this only indicates the maximum reachable clock frequency when the device does not operate at the maximum frequency. it achieves a trade-off between performance and power consumption.*/
     uint8_t FlashPowerDown;           /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to control whether flash memory enters power-down mode when the device enters Stop mode. This allows to achieve a lower consumption in stop mode but a longer restart time.*/
+    uint8_t RegulatorPowerDown;       /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", used to control whether voltage regulator enters power-down mode when the device enters Stop mode. This allows to achieve a lower consumption in stop mode but a longer restart time.*/
     uint8_t PVDEnable;                /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", Power voltage detector enable */
     uint8_t PVDLevel;                 /**< for possible values refer to @HAL_PWR_PVDLevelSelection_t in "PWR_config.h", only used if PVDEnable is enabled.  select the voltage threshold detected by the Power Voltage Detector */
     uint8_t BackUpEnable;             /**< for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", this is used to enable backup SRAM to maintain its content in V_bat mode*/
