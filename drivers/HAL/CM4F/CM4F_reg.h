@@ -345,5 +345,21 @@ static __io uint32_t *global_pu32ACTLRreg_t = (uint32_t *)HAL_CM4F_ACTLR_BASE_AD
  * Function Prototypes
  *******************************************************************************/
 
+/******************************************************************************
+ * private functions and macros used by other modules of same level
+ *******************************************************************************/
+
+/**
+ * @brief: private macro used by power controller (PWR)
+ */
+#define HAL_CM4F_CONFIGURE_SLEEP_ON_EXIT(VAL) \
+	LIB_MATH_BTT_ASSIGN_BIT(global_pSCBReg_t->SCR, HAL_CM4F_SCR_SLEEPONEXIT_POS, VAL)
+
+/**
+ * @brief: private macro used by power controller (PWR)
+ */
+#define HAL_CM4F_CONFIGURE_SLEEPDEEP(VAL) \
+	LIB_MATH_BTT_ASSIGN_BIT(global_pSCBReg_t->SCR, HAL_CM4F_SCR_SLEEPDEEP_POS, VAL)
+
 /*** End of File **************************************************************/
 #endif /*HAL_CM4F_REG_H_*/

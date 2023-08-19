@@ -103,6 +103,7 @@ typedef enum
 {
     HAL_PWR_OK,                 /**< it means everything has gone as intended so no errors*/
     HAL_PWR_ERR_INVALID_PARAMS, /**< it means that the supplied parameters of the function are invalid*/
+    HAL_PWR_ERR_INVALID_CONFIG, /**< it means that the supplied configurations in the "PWR_config.h" file are incorrect*/
 } HAL_PWR_ErrStates_t;
 
 /**

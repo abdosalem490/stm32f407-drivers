@@ -2,6 +2,7 @@
   "C_Cpp.errorSquiggles": "disabled",
   "files.associations": {
     "stdint.h": "c",
-    "cm4f_reg.h": "c"
+    "cm4f_reg.h": "c",
+    "pwr_config.h": "c"
   }
 }

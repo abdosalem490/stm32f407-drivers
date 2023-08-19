@@ -130,9 +130,9 @@ HAL_CRC_ErrStates_t HAL_CRC_Encode(const uint32_t *argConst_pu32DataIn, uint32_t
         LIB_MATH_BTT_SET_BIT(global_pCRCReg_t->CRC_CR, HAL_CRC_CR_RESET);
         for (; arg_u32DataLen > 0; arg_u32DataLen--)
         {
-            global_pCRCReg_t->CRC_DR = argConst_pu32DataIn;
+            global_pCRCReg_t->CRC_DR = *argConst_pu32DataIn;
             argConst_pu32DataIn++;
-            arg_pu32CRCValOut = global_pCRCReg_t->CRC_DR;
+            *arg_pu32CRCValOut = global_pCRCReg_t->CRC_DR;
             arg_pu32CRCValOut++;
         }
     }
