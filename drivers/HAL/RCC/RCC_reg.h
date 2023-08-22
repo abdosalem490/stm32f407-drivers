@@ -365,7 +365,7 @@
  */
 #define HAL_RCC_APB2LPENR_TIM11LPEN 18  /**< TIM11 clock enable during Sleep mode. Set and cleared by software.*/
 #define HAL_RCC_APB2LPENR_TIM10LPEN 17  /**< TIM10 clock enable during Sleep mode. Set and cleared by software*/
-#define HAL_RCC_APB2LPENR_TIM11LPEN 16  /**< TIM9 clock enable during Sleep mode. Set and cleared by software*/
+#define HAL_RCC_APB2LPENR_TIM9LPEN 16   /**< TIM9 clock enable during Sleep mode. Set and cleared by software*/
 #define HAL_RCC_APB2LPENR_SYSCFGLPEN 14 /**< System configuration controller clock enable during Sleep mode. Set and cleared by software.*/
 #define HAL_RCC_APB2LPENR_SPI1LPEN 12   /**< SPI1 clock enable during Sleep mode. Set and cleared by software.*/
 #define HAL_RCC_APB2LPENR_SDIOLPEN 11   /**< SDIO clock enable during Sleep mode. Set and cleared by software.*/

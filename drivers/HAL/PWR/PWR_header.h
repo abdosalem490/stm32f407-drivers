@@ -116,7 +116,7 @@ typedef enum
     HAL_MODE_SLEEP,   /**< Cortex®-M4 with FPU core stopped, peripherals kept running (lowest power saving with the least latency) */
     HAL_MODE_STOP,    /**< all clocks are stopped (moderate power saving with the moderate latency)*/
     HAL_MODE_STANDBY, /**< 1.2 V domain powered off (highest power saving with the highest latency)*/
-    HAL_MAX_MODE,     /**< this value shall never used by the user and it's only used by implementation code to verify input*/
+    HAL_PWR_MAX_MODE, /**< this value shall never used by the user and it's only used by implementation code to verify input*/
 } HAL_PWR_Mode_t;
 
 /**
