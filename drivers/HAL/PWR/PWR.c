@@ -183,7 +183,7 @@ HAL_PWR_ErrStates_t HAL_PWR_EnterMode(const uint8_t argConst_u8Mode)
     HAL_PWR_ErrStates_t local_errState_t = HAL_PWR_OK;
 
     // validate parameters
-    if (argConst_u8Mode >= HAL_MAX_MODE)
+    if (argConst_u8Mode >= HAL_PWR_MAX_MODE)
     {
         local_errState_t = HAL_PWR_ERR_INVALID_PARAMS;
     }

@@ -385,7 +385,7 @@
 #define HAL_RCC_BDCR_RTCSEL 8 /**< RTC clock source selection. Set by software to select the clock source for the RTC. Once the RTC clock source has been selected, it cannot be changed anymore unless the Backup domain is reset. The BDRST bit can be used to reset them.*/
 #define HAL_RCC_BDCR_LSEBYP 2 /**< External low-speed oscillator bypass. Set and cleared by software to bypass the oscillator. This bit can be written only when the LSE clock is disabled.*/
 #define HAL_RCC_BDCR_LSERDY 1 /**< External low-speed oscillator ready. Set and cleared by hardware to indicate when the external 32 kHz oscillator is stable. After the LSEON bit is cleared, LSERDY goes low after 6 external low-speed oscillator clock cycles.*/
-#define HAL_RCC_BDCR_BDRST 0  /**< External low-speed oscillator enable. Set and cleared by software.*/
+#define HAL_RCC_BDCR_LSEON 0  /**< External low-speed oscillator enable. Set and cleared by software.*/
 
 /**
  * @brief: bit definitions for RCC clock control & status register (RCC_CSR), Reset value: 0x0E00 0000.

@@ -54,6 +54,11 @@
  */
 #include "../../lib/stdint.h"
 
+/**
+ * @reason: contains function callback type
+ */
+#include "../../lib/common.h"
+
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
@@ -61,187 +66,6 @@
 /******************************************************************************
  * Configuration Constants
  *******************************************************************************/
-
-/******************************************************************************
- * Tables
- *******************************************************************************/
-
-/**
- * @ref: Clock tree
- * ============================================================================================================================================================================================
- *                    |
- *                    |
- *                    |                                                                                                   |=====|
- *                    |         *--------*      LSI                                               Watchdog enable ----->--| AND |-->-----> IWDGCLK --> (to independent watchdog)
- *                    |         | LSI RC |-----------------------------+----------------------------------------------->--|     |
- *                    |         | 32 kHz |                             |                                                  |=====|
- *                    |         *--------*                             |                RTCS EL[1:0]
- *                    |                                                |                     |
- *                    |                                                |                  |=====|                          |=====|
- *                    |    *------------*                              +--------------->--| MUX |       RTC enable ----->--| AND |-->-------> RTCCLK ---> (to RTC)
- * OSC32_IN-----------X----| LSE OSC    |-->----------------------------+-------------->--|     |-->-------------------->--|     |
- * OSC32_OUT----------X----| 32.768kHz  |                               |            +->--|     |                          |=====|
- *                    |    *------------*                               |            |    |=====|
- *                    |                                         LSE O---+            |
- *                    |                                                              |
- *                    |                                                              |
- *                    |                                       *---------*    HSE_RTC |
- *                    |                           HSE O-------| /2to 31 |-->---------+
- *                    |                                       *---------*
- *                    |
- *                    |
- *                    |
- *                    |                        |=====|
- *                    |                        |     |--<-- SYSCLK
- *                    |      *---------*       | MUX |--<--O PLLI2SCLK
- * MCO2---------------X------| /1 to 5 |--<----|     |--<--O HSE
- *                    |      *---------*       |     |--<--O PLLCLK
- *                    |                        |=====|
- *                    |
- *                    |
- *                    |                        |=====|
- *                    |                        |     |--<--O LSE
- *                    |      *---------*       | MUX |--<--O PLLI2SCLK
- * MCO1---------------X------| /1 to 5 |--<----|     |--<--O HSI
- *                    |      *---------*       |     |--<--O PLLCLK
- *                    |                        |=====|
- *                    |
- *                    |                                                                                                                   |=====|
- *                    |                                             Peripheral clock enable ------------------------------------------->--| AND |-->----> Ethernet PTP clock
- *                    |                                                                                        +----------------------->--|     |
- *                    |                                                                                        |                          |=====|
- *                    |                                                                                        |
- *                    |                                                                                        |                                                             |=====|
- *                    |                                                                                        |                     Clock Enable ------------------------>--| AND |-->------> HCLK to AHB bus, core, memory and DMA.
- *                    |                                                                                        |                                                     +---->--|     |
- *                    |                                                                                        |                                     168 MHz max     |       |=====|
- *                    |                                                                                        |                                    +----------------+
- *                    |                                                                                        |                                    |                       *----*
- *                    |                                                                                        |                                    +-------------------->--| /8 |-->-------------------> to Cortex System timer
- *                    |                                                                                        |                                    |                       *----*
- *                    |                                                       SW --+                           |                                    |
- *                    |                                                            |                           |                                    +----------------------------------------------------> FCLK Cortex free-running clock
- *                    |                                                         |=====|                        |                                    |
- *                    |                                             HSI O---->--| MUX |    SYSCLK 168 MHz max  |         *------------*             |
- *                    |                                             HSE O---->--|     |-->---------------------+------>--| AHB PRESC  |-->----------+
- *                    |                                          PLLCLK O---->--|     |                                  | /1,2,..512 |             |
- *                    |                                                         |=====|                                  *------------*             |                                                                                  |=====|
- *                    |                                                                                                                             |           *--------------*                   Peripheral clock enable --------->--| AND |-->-----------> APBx peripheral clocks
- *                    |         *--------*                                                                                                          +-------->--| APBx PRESC   |-------------+-------------------------------------->--|     |
- *                    |         | HSI RC |--->----O HSI                                                                                                         | / 1,2,4,8,16 |             |                                         |=====|
- *                    |         | 16 MHz |                                                                                                                      *--------------*             |
- *                    |         *--------*                                                                                                                                                   |
- *                    |                                                                                                                                                                      |                                                        |=====|
- *                    |                                                                                                                                                                      |      Peripheral clock enable ----------------------->--| AND |-->------> APBx timer clocks
- *                    |                                                                                                                                                                      |                                           +--------->--|     |
- *                    |                                                                                                                                                                      |                                           |            |=====|
- *                    |                                                                                                                                                                      |          *------------------------*       |
- *                    |                                                                                                                                                                      +------->--| if (APBx presc = 1) x1 |-------+
- *                    |                                                                                                                                                                                 | else x2                |
- *                    |                                                                                                                                                                                 *------------------------*
- *                    |    *-----------*
- * OSC_OUT------------X----| 4-26 MHz  |----->-------O HSE
- * OSC_IN-------------X----| HSE OSC   |
- *                    |    *-----------*
- *                    |
- *                    |
- *                    |
- *                    |
- *                    |                                          +-->--O Label_1
- *                    |                                          |
- *                    |  *-----------------------------------*   |
- *                    |  |                                   |   |     *----*          |=====|
- *                    |  |  +--------------------------------X---+--<--| /M |---<------| MUX |--<---O HSI
- *                    |  |  |                                |         *----*          |     |--<---O HSE
- *                    |  |  |                                |                         |=====|
- *                    |  |  |    *-----*            *----*   |                                                                              |=====|
- *                    |  |  +----| VCO |---+----+---| /P |---+------------>--O PLLCLK                       Peripheral clock enable------>--| AND |
- *                    |  |  |    *-----*   |    |   *----*   |                                                                       +------|     |----> 48 MHz clocks
- *                    |  |  |              |    |   *----*   |      PLL48CK                                                          |      |=====|
- *                    |  |  |   *----*     |    +---| /Q |---+-----------------------------------------------------------------------+
- *                    |  |  +---| xN |-----+    |   *----*   |
- *                    |  |      *----*          |   *----*   |
- *                    |  |                      +---| /R |---+
- *                    |  |                          *----*   |
- *                    |  |                                   |
- *                    |  |  *PLL*                            |
- *                    |  *-----------------------------------*
- *                    |
- *                    |
- *                    |  *-----------------------------------*
- *                    |  |                                   |
- *                    |  |  +--------------------------------X------------<--O Label_1
- *                    |  |  |                                |
- *                    |  |  |    *-----*            *----*   |
- *                    |  |  +----| VCO |---+----+---| /P |---+
- *                    |  |  |    *-----*   |    |   *----*   |
- *                    |  |  |              |    |   *----*   |
- *                    |  |  |   *----*     |    +---| /Q |---+
- *                    |  |  +---| xN |-----+    |   *----*   |
- *                    |  |      *----*          |   *----*   |
- *                    |  |                      +---| /R |---+            +------O PLLI2SCLK
- *                    |  |                          *----*   |            |
- *                    |  |                                   |  PLLI2SCLK |
- *                    |  |  *PLLI2S*                         |------------+       I2SSRC
- *                    |  *-----------------------------------*            |          |
- *                    |                                                   |       |=====|                                               |=====|
- *                    |                                  Ext. clock       +---->--| MUX |               Peripheral clock enable------>--| AND |
- *  I2S_CKIN----------X-------------------------------------------------------->--|     |->------------------------------------------>--|     |->----> I2S clocks
- *                    |                                                           |=====|                                               |=====|
- *                    |
- *                    |
- *                    |
- *                    |
- *                    |
- *                    |
- *                    |                                                                                                                                 to Ethernet MAC
- * *--------------*   |  ETH_MII_TX_CLK_MII                         |=====|                                                         |=====|
- * | PHY Ethernet |---X--------------------->-------------------->--| MUX |                         Peripheral clock enable------>--| AND |
- * | 25 to 50 MHz |   |                                 +-------->--|     |->---------------------------------------------------->--|     |-->-----> MACTXCLK
- * |              |   |                                 |           |=====|                                                         |=====|
- * |              |   |                 *-------*       |              |
- * |              |---X---------+-------| /2,20 |-------+   MII_RMII_SEL in SYSCFG_PMC
- * *--------------*   |         |       *-------*       |              |
- *                    |         |                       |           |=====|                                                         |=====|
- *                    |         |  ETH_MII_RX_CLK_MII   +-------->--| MUX |                         Peripheral clock enable------>--| AND |
- *                    |         +-------------------------------->--|     |-->------------------------------------------------------|     |-->----> MACRXCLK
- *                    |         |                                   |=====|                                                         |=====|
- *                    |         |
- *                    |         |                                                                                                   |=====|
- *                    |         |                                                                   Peripheral clock enable------>--| AND |
- *                    |         +------------------------------------------------------------------------------------------------>--|     |-->----> MACRMIICLK
- *                    |                                                                                                             |=====|
- *                    |
- *                    |
- *                    |
- *                    |                                                                                                             |=====|
- * *--------------*   |         OTG_HS_ULPI_CK                                                      Peripheral clock enable------>--| AND |
- * | USB2.0 PHY   |---X---------------------------------------------------------------------------------------------------------->--|     |-->------> USBHS ULPI clock
- * | 24 to 60 MHz |   |                                                                                                             |=====|
- * *--------------*   |
- *                    |
- *                    |
- * ===========================================================================================================================================================================================
- *
- */
-
-/******************************************************************************
- * info
- *******************************************************************************/
-
-/**
- * @ref: DIFF_BETWEEN_WFI_AND_WFE
- * difference between wait for interrupt (WFI) and wait for event (WFE)?
- *
- *  WFI (wait for interrupt)    :       it suspends execution until one of the following events occurs:
- *                                              ->  An exception.
- *                                              ->  A Debug Entry request, regardless of whether Debug is enabled.
- *  WFE (wait for Event)        :       it suspends execution until one of the following events occurs:
- *                                              ->  An exception, unless masked by exception mask registers or the current priority level.
- *                                              ->  An exception enters Pending state, if SEVONPEND in System Control Register is set.
- *                                              ->  A Debug Entry request, if Debug is enabled.
- *                                              ->  An event signaled by a peripheral or another processor in a multiprocessor system using the SEV instruction.
- */
 
 /******************************************************************************
  * Macros
@@ -259,45 +83,95 @@
  */
 typedef enum
 {
-    HAL_RCC_OK,                 /**< it means everything has gone as intended so no errors*/
-    HAL_RCC_ERR_INVALID_PARAMS, /**< it means that the supplied parameters of the function are invalid*/
-    HAL_RCC_ERR_INVALID_CONFIG, /**< it means that the supplied configurations in the "RCC_config.h" file are incorrect*/
+    HAL_RCC_OK,                  /**< it means everything has gone as intended so no errors*/
+    HAL_RCC_ERR_INVALID_PARAMS,  /**< it means that the supplied parameters of the function are invalid*/
+    HAL_RCC_ERR_INVALID_CONFIG,  /**< it means that the supplied configurations in the "RCC_config.h" file are incorrect*/
+    HAL_RCC_ERR_INVALID_CLK_VAL, /**< it means that the entered clock value couldn't be configured (mostly it's due to PLL,PLLI2S vals)*/
 } HAL_RCC_ErrStates_t;
 
 /**
- * @enum: HAL_RCC_Mode_t
- * @brief: contains all possible errors that can result from dealing with the power controller.
+ * @enum: HAL_RCC_Peripherals_t
+ * @brief: contains all possible peripherals controlled by RCC.
  */
 typedef enum
 {
-    HAL_MODE_RUN,     /**< CPU is clocked by HCLK and the program code is executed. (normal run)*/
-    HAL_MODE_SLEEP,   /**< Cortex®-M4 with FPU core stopped, peripherals kept running (lowest power saving with the least latency) */
-    HAL_MODE_STOP,    /**< all clocks are stopped (moderate power saving with the moderate latency)*/
-    HAL_MODE_STANDBY, /**< 1.2 V domain powered off (highest power saving with the highest latency)*/
-    HAL_RCC_MAX_MODE, /**< this value shall never used by the user and it's only used by implementation code to verify input*/
-} HAL_RCC_PeripheralsModify_t;
+    HAL_RCC_PERIPHERAL_USB_OTG,   /**< USB module, whether it's high speed or full speed it depends on configurations supplied to "USB_condig.h" */
+    HAL_RCC_PERIPHERAL_ETHERNET,  /**< Ethernet module whether we are talking about RX,TX,MAC, etc.. */
+    HAL_RCC_PERIPHERAL_DMA1,      /**< DMA1 (direct memory access) module */
+    HAL_RCC_PERIPHERAL_DMA2,      /**< DMA2 (direct memory access) module */
+    HAL_RCC_PERIPHERAL_CCM,       /**< CCM (coupled core memory) module*/
+    HAL_RCC_PERIPHERAL_BKP_SRAM,  /**< Backup SRAM module */
+    HAL_RCC_PERIPHERAL_SRAM1,     /**< SRAM1 module */
+    HAL_RCC_PERIPHERAL_SRAM2,     /**< SRAM2 module */
+    HAL_RCC_PERIPHERAL_CRC,       /**< CRC (cyclic redundancy check) module */
+    HAL_RCC_PERIPHERAL_GPIOA,     /**< GPIOA module */
+    HAL_RCC_PERIPHERAL_GPIOB,     /**< GPIOB module */
+    HAL_RCC_PERIPHERAL_GPIOC,     /**< GPIOC module */
+    HAL_RCC_PERIPHERAL_GPIOD,     /**< GPIOD module */
+    HAL_RCC_PERIPHERAL_GPIOE,     /**< GPIOE module */
+    HAL_RCC_PERIPHERAL_GPIOF,     /**< GPIOF module */
+    HAL_RCC_PERIPHERAL_GPIOG,     /**< GPIOG module */
+    HAL_RCC_PERIPHERAL_GPIOH,     /**< GPIOH module */
+    HAL_RCC_PERIPHERAL_GPIOI,     /**< GPIOI module */
+    HAL_RCC_PERIPHERAL_RNG,       /**< RNG (Random number generator) module */
+    HAL_RCC_PERIPHERAL_HASH,      /**< HASH processor module */
+    HAL_RCC_PERIPHERAL_CRYPTO,    /**< Cryptographic processor module */
+    HAL_RCC_PERIPHERAL_CAMERA,    /**< Camera digital module */
+    HAL_RCC_PERIPHERAL_FSMC,      /**< Flexible static Memory controller module */
+    HAL_RCC_PERIPHERAL_DAC,       /**< DAC module */
+    HAL_RCC_PERIPHERAL_PWR,       /**< Power controller module */
+    HAL_RCC_PERIPHERAL_CAN1,      /**< CAN1 module */
+    HAL_RCC_PERIPHERAL_CAN2,      /**< CAN2 module */
+    HAL_RCC_PERIPHERAL_I2C1,      /**< I2C1 module */
+    HAL_RCC_PERIPHERAL_I2C2,      /**< I2C2 module */
+    HAL_RCC_PERIPHERAL_I2C3,      /**< I2C3 module */
+    HAL_RCC_PERIPHERAL_USART1,    /**< USART1 module */
+    HAL_RCC_PERIPHERAL_USART2,    /**< USART2 module */
+    HAL_RCC_PERIPHERAL_USART3,    /**< USART3 module */
+    HAL_RCC_PERIPHERAL_UART4,     /**< UART4 module */
+    HAL_RCC_PERIPHERAL_UART5,     /**< UART5 module */
+    HAL_RCC_PERIPHERAL_USART6,    /**< USART6 module */
+    HAL_RCC_PERIPHERAL_SPI1,      /**< SPI1 module */
+    HAL_RCC_PERIPHERAL_SPI2,      /**< SPI2 module */
+    HAL_RCC_PERIPHERAL_SPI3,      /**< SPI3 module */
+    HAL_RCC_PERIPHERAL_WWDG,      /**< Window watchdog module */
+    HAL_RCC_PERIPHERAL_TIM1,      /**< TIM1 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM2,      /**< TIM2 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM3,      /**< TIM3 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM4,      /**< TIM4 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM5,      /**< TIM5 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM6,      /**< TIM6 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM7,      /**< TIM7 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM8,      /**< TIM8 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM9,      /**< TIM9 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM10,     /**< TIM10 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM11,     /**< TIM11 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM12,     /**< TIM12 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM13,     /**< TIM13 (Timer) module */
+    HAL_RCC_PERIPHERAL_TIM14,     /**< TIM14 (Timer) module */
+    HAL_RCC_PERIPHERAL_SYS_CFG,   /**< System Configuration module */
+    HAL_RCC_PERIPHERAL_SDIO,      /**< SDIO (Secure digital input/output) module */
+    HAL_RCC_PERIPHERAL_ADC1,      /**< ADC1 module */
+    HAL_RCC_PERIPHERAL_ADC2,      /**< ADC2 module */
+    HAL_RCC_PERIPHERAL_ADC3,      /**< ADC3 module */
+    HAL_RCC_PERIPHERAL_FLASH_MEM, /**< Flash interface module */
+    HAL_RCC_PERIPHERAL_RTC,       /**< RTC (real time clock) module */
+    HAL_RCC_MAX_PERIPHERAL,       /**< this value shall never used by the user and it's only used by implementation code to verify input*/
+} HAL_RCC_Peripherals_t;
 
 /**
- * @enum: HAL_RCC_VAL_SleepMethod_t
- * @brief: contains all possibles values regarding how to enter sleep mode.
+ * @enum: HAL_RCC_PeripheralOperation_t
+ * @brief: constants used to to determine which operation to be performed on a peripheral via RCC.
  */
 typedef enum
 {
-    HAL_RCC_VAL_SLEEP_METHOD_WFE, /**< this makes MCU waits for event to occur while sleeping, refer to @DIFF_BETWEEN_WFI_AND_WFE in "RCC_header" to know difference between WFE and WFI*/
-    HAL_RCC_VAL_SLEEP_METHOD_WFI, /**< this makes MCU waits for interrupt to occur while sleeping, refer to @DIFF_BETWEEN_WFI_AND_WFE in "RCC_header" to know difference between WFE and WFI*/
-    HAL_RCC_MAX_VAL_SLEEP_METHOD, /**< this value shall never used by the user and it's only used by implementation code to verify input*/
-} HAL_RCC_VAL_SleepMethod_t;
-
-/**
- * @enum: HAL_RCC_ConfigKeys_t
- * @brief: contains all possibles keys of configuration that can be edited during runtime, each value inside this enum has a comment telling where to find the the corresponding possible values.
- */
-typedef enum
-{
-    HAL_RCC_KEY_SLEEP_METHOD,          /**< for possible corresponding values refer to @HAL_RCC_VAL_SleepMethod_t in "RCC_header.h", it indicates how the MCU shall enter the sleep mode*/
-    HAL_RCC_KEY_SLEEP_EXIT_ISR_ENABLE, /**< for for possible values refer to @LIB_CONSTANTS_DriverStates_t in "constants.h", it indicates whether to enable or disable sleeping on exit from ISR*/
-    HAL_RCC_MAX_CONFIG_KEYS,           /**< this value shall never used by the user and it's only used by implementation code to verify input*/
-} HAL_RCC_ConfigKeys_t;
+    HAL_RCC_PERI_OP_RESET,           /**< used to reset the peripheral*/
+    HAL_RCC_PERI_OP_ENABLE,          /**< used to enable the peripheral in run mode*/
+    HAL_RCC_PERI_OP_DISABLE,         /**< used to disable the peripheral in run mode*/
+    HAL_RCC_PERI_OP_LOW_PWR_ENABLE,  /**< used to enable the peripheral in sleep mode*/
+    HAL_RCC_PERI_OP_LOW_PWR_DISABLE, /**< used to disable the peripheral in sleep mode*/
+    HAL_RCC_MAX_PERI_OP,             /**< that value should never be used and it's only used by the implementation code for verifying the input*/
+} HAL_RCC_PeripheralOperation_t;
 
 /**
  * @enum: HAL_RCC_CallbacksTypes_t
@@ -305,9 +179,26 @@ typedef enum
  */
 typedef enum
 {
-    HAL_RCC_CALLBACK_PVD_LEVEL, /**< used to tell*/
-    HAL_RCC_MAX_CALLBACK_TYPE,  /**< that value should never be used and it's only used by the implementation code for verifying the input*/
+    HAL_RCC_CALLBACK_CLOCK_SECURITY, /**< used when the clock becomes unstable */
+    HAL_RCC_MAX_CALLBACK_TYPE,       /**< that value should never be used and it's only used by the implementation code for verifying the input*/
 } HAL_RCC_CallbacksTypes_t;
+
+/**
+ * @enum: HAL_RCC_ResetCause_t
+ * @brief: it holds all the causes that can cause system reset
+ */
+typedef enum
+{
+    HAL_RCC_RESET_CAUSE_LOW_POWER,             /**< when a Low-power management reset occurs.*/
+    HAL_RCC_RESET_CAUSE_WINDOW_WATCHDOG,       /**< when a window watchdog reset occurs.*/
+    HAL_RCC_RESET_CAUSE_INDEPENDEDNT_WATCHDOG, /**< when an independent watchdog reset from VDD domain occurs.*/
+    HAL_RCC_RESET_CAUSE_SOFTWARE,              /**< when a software reset occurs.*/
+    HAL_RCC_RESET_CAUSE_POR_PDR,               /**< when a POR/PDR reset occurs.*/
+    HAL_RCC_RESET_CAUSE_PIN,                   /**< when a reset from the NRST pin occurs.*/
+    HAL_RCC_RESET_CAUSE_BOR,                   /**< when a BOR reset occurs.*/
+    HAL_RCC_NO_RESET_HAPPENED,                 /**< No reset happened*/
+    HAL_RCC_MAX_RESET_CAUSE_TYPE,              /**< that value should never be used and it's only used by the implementation code for verifying the input*/
+} HAL_RCC_ResetCause_t;
 
 /******************************************************************************
  * Variables
@@ -319,22 +210,15 @@ typedef enum
 
 /**
  *  \b function                     :       HAL_RCC_Init()
- *  \b Description                  :       this functions initialize the power controller configuration with the configurations supplied in "RCC_config.h"
+ *  \b Description                  :       this functions initialize the Reset and clock control configuration with the configurations supplied in "RCC_config.h"
  *  @param                          :       None
  *  @note                           :       This shall be the first function to be called before using any other function in this interface, also it's a blocking function
  *                                          IT IS ADVISED TO CALL HAL_RCC_Init() BEFORE CALLING ANY OTHER FUNCTION
  *  \b PRE-CONDITION                :       make sure to edit all configurations in file "RCC_config.h" (any array labeled with @user_todo shall be edited)
- *  \b POST-CONDITION               :       it configures the following properties of RCC memory:
- *                                              -> Regulator voltage scaling output selection
- *                                              -> Flash power-down in Stop mode enablement
- *                                              -> PVD level selection
- *                                              -> Power voltage detector enable
- *                                              -> Enable WKUP pin
+ *  \b POST-CONDITION               :       it configures the Clock sources.
+ *                                          it configures all peripherals enablement of RCC clock during sleep and run mode.
  *  @return                         :       it return one of error states indicating whether a failure or success happened during initialization (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
  *  @see                            :       HAL_RCC_EnterMode(const uint8_t argConst_u8Mode)
- *  @see                            :       HAL_RCC_Config(const uint8_t argConst_u8Key, const uint8_t argConst_u8Value)
- *  @see                            :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
- *
  *  \b Example:
  * @code
  * #include "RCC_header.h"
@@ -342,7 +226,7 @@ typedef enum
  *  HAL_RCC_ErrStates_t local_errState_t = HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so that Power controller can be initialized correctly
  *  if (local_errState_t == HAL_RCC_OK)
  *  {
- *      // power controller initialized successfully
+ *      // Reset and clock initialized successfully
  *  }
  *  return 0;
  * }
@@ -351,32 +235,31 @@ typedef enum
  * <br><b> - HISTORY OF CHANGES - </b>
  * <table align="left" style="width:800px">
  * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
- * <tr><td> 16/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * <tr><td> 26/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
  * </table><br><br>
  * <hr>
  */
 HAL_RCC_ErrStates_t HAL_RCC_Init();
 
 /**
- *  \b function                             :       HAL_RCC_EnterMode(const uint8_t argConst_u8Mode)
- *  \b Description                          :       this functions is used to enter one of the sleep modes or return to the run mode.
- *  @param  argConst_u8Mode [IN]            :       for possible values refer to @HAL_RCC_Mode_t in "RCC_header.h", this is input parameter which indicates which mode to switch to.
- *  @note                                   :       the function will return in run mode unless interrupt/event happened (it's not possible the function will return while MCU is in sleep mode).
- *  \b PRE-CONDITION                        :       make sure to call HAL_RCC_Init() and there is no interrupt/event pending.
- *  \b POST-CONDITION                       :       MCU enters to the selected mode.
- *  @return                                 :       it return one of error states indicating whether a failure or success happened during writing of data (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
- *  @see                                    :       HAL_RCC_Init()
- *  @see                                    :       HAL_RCC_Config(const uint8_t argConst_u8Key, const uint8_t argConst_u8Value)
- *  @see                                    :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
+ *  \b function                                 :       HAL_RCC_ErrStates_t HAL_RCC_PeripheralModify(const uint8_t argConst_u8PeripheralName, const uint8_t argConst_u8Operation)
+ *  \b Description                              :       this functions is used to modify peripheral during runtime like enable\reset\disable\low_power_enable\low_power_disable\etc...
+ *  @param  argConst_u8PeripheralName [IN]      :       for possible values refer to @HAL_RCC_Peripherals_t in "RCC_header.h", this is input parameter which indicates which peripheral to modify.
+ *  @param  argConst_u8Operation [IN]           :       for possible values refer to @HAL_RCC_PeripheralOperation_t in "RCC_header.h", this is input parameter which indicates which operation to perform on the peripheral.
+ *  @note                                       :       None.
+ *  \b PRE-CONDITION                            :       make sure to call HAL_RCC_Init().
+ *  \b POST-CONDITION                           :       MCU peripheral status changes according to the desired operation.
+ *  @return                                     :       it return one of error states indicating whether a failure or success happened (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
+ *  @see                                        :       HAL_RCC_Init()
  *  \b Example:
  * @code
  * #include "RCC_header.h"
  * int main() {
- * HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so that Power controller can be initialized correctly
- * HAL_RCC_ErrStates_t local_errState_t = HAL_RCC_EnterMode(HAL_MODE_STOP);
+ * HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so that RCC can be initialized correctly
+ * HAL_RCC_ErrStates_t local_errState_t = HAL_RCC_PeripheralModify(HAL_RCC_PERIPHERAL_TIM1, HAL_RCC_PERI_OP_RESET);
  * if (local_errState_t == HAL_RCC_OK)
  * {
- *  // MCU entered mode successfully and just exited from the mode
+ *  // TIM1 is reset successfully
  * }
  * return 0;
  * }
@@ -385,33 +268,35 @@ HAL_RCC_ErrStates_t HAL_RCC_Init();
  * <br><b> - HISTORY OF CHANGES - </b>
  * <table align="left" style="width:800px">
  * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
- * <tr><td> 16/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * <tr><td> 27/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
  * </table><br><br>
  * <hr>
  */
-HAL_RCC_ErrStates_t HAL_RCC_EnterMode(const uint8_t argConst_u8Mode);
+HAL_RCC_ErrStates_t HAL_RCC_PeripheralModify(const uint8_t argConst_u8PeripheralName, const uint8_t argConst_u8Operation);
 
 /**
- *  \b function                             :       HAL_RCC_Config(const uint8_t argConst_u8Key, const uint8_t argConst_u8Value)
- *  \b Description                          :       this functions is used to change the behavior of the functions by changing some key configuration values during runtime.
- *  @param  argConst_u8Key [IN]             :       this is input parameter which is key of the parameter to be changed, for possible values refer to @HAL_RCC_ConfigKeys_t in "RCC_header.h".
- *  @param  argConst_u8Value [IN]           :       this is input parameter which value of configuration to be assigned to the corresponding selected key. for possible values, every key has its set of values, refer to @HAL_RCC_ConfigKeys_t in "RCC_header.h" as the possible values are written as comments for every key.
- *  @note                                   :       None.
+ *  \b function                             :       HAL_RCC_GetSystemResetType(const uint8_t *argConst_pu8Value)
+ *  \b Description                          :       this functions is used to return what caused the last system reset.
+ *  @param  argConst_pu8Value [OUT]         :       this is output parameter indicates what cased the last system reset, it will hold one of the value mentioned in  @HAL_RCC_ResetCause_t in "RCC_header.h"
+ *  @note                                   :       this function once called, it will clear all the reset flags so it can't be called again.
  *  \b PRE-CONDITION                        :       None.
- *  \b POST-CONDITION                       :       it changes the behavior of some functions of the interface.
- *  @return                                 :       it return one of error states indicating whether a failure or success happened during the edit of configuration (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
+ *  \b POST-CONDITION                       :       it clears the reset flags.
+ *  @return                                 :       it return one of error states indicating whether a failure or success regarding function operation
  *  @see                                    :       HAL_RCC_Init()
- *  @see                                    :       HAL_RCC_EnterMode(const uint8_t argConst_u8Mode)
- *  @see                                    :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
  *  \b Example:
  * @code
  * #include "RCC_header.h"
  * int main() {
- *  HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so that Power controller can be initialized correctly
- *  HAL_RCC_ErrStates_t local_errState_t = HAL_RCC_Config(HAL_RCC_KEY_SLEEP_METHOD, HAL_RCC_VAL_SLEEP_METHOD_WFE);
+ *  HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so thatRCC can be initialized correctly
+ *  uint8_t resetCause = 0;
+ *  HAL_RCC_ErrStates_t local_errState_t = HAL_RCC_GetSystemResetType(&resetCause);
  *  if (local_errState_t == HAL_RCC_OK)
  *  {
- *      HAL_RCC_EnterMode(HAL_MODE_STOP);   // function will use instruction WFE to enter the STOP mode
+ *      // check for cause of reset
+ *      if(resetCause == HAL_RCC_RESET_CAUSE_PIN)
+ *      {
+ *          // the reset is due to nrst
+ *      }
  *  }
  *  return 0;
  * }
@@ -420,39 +305,71 @@ HAL_RCC_ErrStates_t HAL_RCC_EnterMode(const uint8_t argConst_u8Mode);
  * <br><b> - HISTORY OF CHANGES - </b>
  * <table align="left" style="width:800px">
  * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
- * <tr><td> 30/07/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * <tr><td> 31/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
  * </table><br><br>
  * <hr>
  */
-HAL_RCC_ErrStates_t HAL_RCC_Config(const uint8_t argConst_u8Key, const uint8_t argConst_u8Value);
+HAL_RCC_ErrStates_t HAL_RCC_GetSystemResetType(uint8_t *const arg_Constpu8Value);
+
+/**
+ *  \b function                             :       HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u8PeripheralName, uint32_t *const arg_Constpu32Value)
+ *  \b Description                          :       this functions is used to return clock input frequency to a specific peripheral.
+ *  @param  argConst_u8PeripheralName [IN]  :       this is input parameter which is the peripheral that you want to know what's the input clock frequency to it. for possible values refer to @HAL_RCC_Peripherals_t in "RCC_header.h".
+ *  @param  argConst_pu8Value [OUT]         :       this is output parameter which is the input clock frequency in HZ to that peripheral.
+ *  @note                                   :       None.
+ *  \b PRE-CONDITION                        :       None.
+ *  \b POST-CONDITION                       :       None.
+ *  @return                                 :       it return one of error states indicating whether a failure or success regarding function operation
+ *  @see                                    :       HAL_RCC_Init()
+ *  \b Example:
+ * @code
+ * #include "RCC_header.h"
+ * int main() {
+ *  HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so thatRCC can be initialized correctly
+ *  uint32_t GPIOA_inputClockFrequency = 0;
+ *  HAL_RCC_ErrStates_t local_errState_t = HAL_RCC_GetSystemResetType(HAL_RCC_PERIPHERAL_GPIOA, &GPIOA_inputClockFrequency);
+ *  if (local_errState_t == HAL_RCC_OK)
+ *  {
+ *      // GPIOA_inputClockFrequency will hold the value of input clock frequency to GPIOA
+ *  }
+ *  return 0;
+ * }
+ * @endcode
+ *
+ * <br><b> - HISTORY OF CHANGES - </b>
+ * <table align="left" style="width:800px">
+ * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
+ * <tr><td> 31/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * </table><br><br>
+ * <hr>
+ */
+HAL_RCC_ErrStates_t HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u8PeripheralName, uint32_t *const arg_Constpu32Value);
 
 /**
  *  \b function                             :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
  *  \b Description                          :       this functions is used to register a callback function to be executed from user code when an interrupt happens.
- *  @param  argConst_u8CallBackType [IN]    :       this is input parameter indicates which interrupt handler to attach this function to, for possible values, refer to  @HAL_RCC_CallbacksTypes_t in "RCC_header.h"
+ *  @param  argConst_u8CallBackType [IN]    :       this is input parameter indicates which interrupt handler to attach this function to, for possible values, refer to  @HAL_PWR_CallbacksTypes_t in "PWR_header.h"
  *  @param  argConst_pFunctionCallBack [IN] :       this is the function to be called when the specified action interrupt happens.
  *  @note                                   :       None.
- *  \b PRE-CONDITION                        :       make sure to call HAL_RCC_Init() and make sure the address of function is valid address and the interrupts are enabled for that event.
+ *  \b PRE-CONDITION                        :       make sure to call HAL_RCC_Init() and make sure the address of function is valid address.
  *  \b POST-CONDITION                       :       assign the given function to a specific action.
  *  @return                                 :       it return one of error states indicating whether a failure or success happened during the registration of callbacks (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
  *  @see                                    :       HAL_RCC_Init()
- *  @see                                    :       HAL_RCC_EnterMode(const uint8_t argConst_u8Mode)
- *  @see                                    :       HAL_RCC_Config(const uint8_t argConst_u8Key, const uint8_t argConst_u8Value)
  *  \b Example:
  * @code
  * #include "RCC_header.h"
  *
  * int code = 0;
- * void levelChange(void)    // this function is to be called when PVD level is under a specific volt level.
+ * void clockUnstable(void)    // this function is to be called when PVD level is under a specific volt level.
  * {
  *  code = 1;
  * }
  *
  * int main() {
- *  HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so that power controller can be initialized correctly
+ *  HAL_RCC_Init();    // make sure that you edited any array in "RCC_config.h" labeled with @user_todo so that RCC can be initialized correctly
  *  HAL_RCC_ErrStates_t error_state;
  *
- *  HAL_RCC_RegisterCallback(HAL_RCC_CALLBACK_PVD_LEVEL, levelChange);  // when PVD level is less/more than a specific threshold specified int "RCC_config.h" function called "levelChange()" will be called
+ *  HAL_RCC_RegisterCallback(HAL_RCC_CALLBACK_PVD_LEVEL, clockUnstable);  // when system clock becomes unstable "function called "levelChange()" will be called.
  *
  *
  * return 0;
@@ -462,7 +379,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Config(const uint8_t argConst_u8Key, const uint8_t a
  * <br><b> - HISTORY OF CHANGES - </b>
  * <table align="left" style="width:800px">
  * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
- * <tr><td> 16/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * <tr><td> 31/08/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
  * </table><br><br>
  * <hr>
  */

@@ -119,7 +119,7 @@ HAL_FLASH_ErrStates_t HAL_FLASH_Init()
     uint16_t local_u16TempVal = 0;
     uint8_t local_u32Counter = 0;
     uint8_t local_u8TempBitPos = 0;
-    uint8_t local_u8SectorsLength = sizeof globalConstArr_SectorsConfig_t / sizeof globalConstArr_SectorsConfig_t[0];
+    uint8_t local_u8SectorsLength = (sizeof globalConstArr_SectorsConfig_t) / (sizeof globalConstArr_SectorsConfig_t[0]);
     HAL_FLASH_ErrStates_t local_errState_t = HAL_FLASH_OK;
 
     // check for errors

@@ -3,6 +3,8 @@
   "files.associations": {
     "stdint.h": "c",
     "cm4f_reg.h": "c",
-    "pwr_config.h": "c"
+    "pwr_config.h": "c",
+    "rcc_private.h": "c",
+    "rcc_reg.h": "c"
   }
 }

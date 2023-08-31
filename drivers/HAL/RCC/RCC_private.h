@@ -81,6 +81,21 @@
  *******************************************************************************/
 
 /**
+ * @brief: these are the speeds of internal clocks
+ */
+#define HAL_RCC_LSI_SPEED 32000         /**< 32 KHZ*/
+#define HAL_RCC_LSE_SPEED 32768         /**< 32.768 kHz*/
+#define HAL_RCC_HSI_SPEED 16000000      /**< 16 MHZ*/
+#define HAL_RCC_PLL48CLK_SPEED 48000000 /**< 48 MHZ*/
+
+/**
+ * @brief maximum/minimum frequencies allowed on a bus
+ */
+#define HAL_RCC_VCO_MIN_SPEED 100000000    /**< 100 MHZ*/
+#define HAL_RCC_VCO_MAX_SPEED 432000000    /**< 432 MHZ*/
+#define HAL_RCC_SYSCLK_MAX_SPEED 168000000 /**< 168 MHZ*/
+
+/**
  * @brief: USB OTG module RCC utilities
  */
 #define HAL_RCC_RST_OTGHSRST()  \ 
@@ -174,7 +189,7 @@
     LIB_MATH_BTT_ASSIGN_BIT(global_pRCCReg_t->RCC_AHB1LPENR, HAL_RCC_AHB1LPENR_BKPSRAMLPEN)
 
 /**
- * @brief:  Backup SRAM interface module RCC utilities
+ * @brief:  SRAM interface module RCC utilities
  */
 #define HAL_RCC_LOW_PWR_SRAM2LPEN(ENABLEMENT_VAL) \
     LIB_MATH_BTT_ASSIGN_BIT(global_pRCCReg_t->RCC_AHB1LPENR, HAL_RCC_AHB1LPENR_SRAM2LPEN)
@@ -694,6 +709,17 @@
 /******************************************************************************
  * Variables
  *******************************************************************************/
+
+/**
+ * @brief: these variables holds the current clock values of the system
+ */
+static uint32_t global_u32SystemClock = 0;
+static uint32_t global_u32HSEtoRTCClk = 0;
+
+/**
+ * @brief: these are the function to be called when special event happens
+ */
+static functionCallBack_t global_pClockUnstableCallBack_t = NULL;
 
 /******************************************************************************
  * Function Prototypes
