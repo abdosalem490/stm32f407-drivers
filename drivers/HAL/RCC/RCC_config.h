@@ -512,10 +512,10 @@ typedef struct
  */
 const HAL_RCC_SYSCLK_ClockConfig_t globalConstArr_RCC_SYSCLK_ClockConfig_t[] = {
     {
-        .SYSClkClockSource = HAL_RCC_SYSCLK_CLK_SRC_HSI,
+        .SYSClkClockSource = HAL_RCC_SYSCLK_CLK_SRC_HSE,
         .SYSCLK_to_AHB_Prescalar = 1,
-        .AHB_to_APB1_Prescalar = 1,
-        .AHB_to_APB2_Prescalar = 1,
+        .AHB_to_APB1_Prescalar = 4,
+        .AHB_to_APB2_Prescalar = 4,
     }
 
 };
@@ -792,8 +792,8 @@ const HAL_RCC_EnablementConfig_t globalConstArr_RCCEnablementConfig_t[] = {
     },
     [HAL_RCC_PERIPHERAL_WWDG] = {
         .PeripheralName = HAL_RCC_PERIPHERAL_WWDG,
-        .EnableInSleepMode = LIB_CONSTANTS_ENABLED,
-        .EnableInRunMode = LIB_CONSTANTS_ENABLED,
+        .EnableInSleepMode = LIB_CONSTANTS_DISABLED,
+        .EnableInRunMode = LIB_CONSTANTS_DISABLED,
     },
     [HAL_RCC_PERIPHERAL_TIM1] = {
         .PeripheralName = HAL_RCC_PERIPHERAL_TIM1,

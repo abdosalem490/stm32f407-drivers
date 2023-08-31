@@ -179,9 +179,9 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
         globalConstArr_RCC_MCO_ClockConfig_t[0].MCO2Prescalar > 5 ||
         globalConstArr_RCC_RTC_ClockConfig_t[0].RTCClockSource >= HAL_RCC_MAX_RTC_CLK_SRC ||
         globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSClkClockSource >= HAL_RCC_MAX_SYSCLK_CLK_SRC ||
-        (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar != 0 && globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar <= 16 && (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar & globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar - 1)) ||
-        (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar != 0 && globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar <= 16 && (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar & globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar - 1)) ||
-        (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar != 0 && globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar <= 16 && (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar & globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar - 1)) ||
+        (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar != 0 && globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar <= 16 && (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar & (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar - 1))) ||
+        (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar != 0 && globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar <= 16 && (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar & (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar - 1))) ||
+        (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar != 0 && globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar <= 16 && (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar & (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar - 1))) ||
         (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSClkClockSource == HAL_RCC_SYSCLK_CLK_SRC_PLL && globalConstArr_RCC_PLL_ClockConfig_t[0].PLLOutputValue / globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar > 168000000) ||
         (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSClkClockSource == HAL_RCC_SYSCLK_CLK_SRC_PLL && globalConstArr_RCC_PLL_ClockConfig_t[0].PLLOutputValue / (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar * globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB1_Prescalar) > 42000000) ||
         (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSClkClockSource == HAL_RCC_SYSCLK_CLK_SRC_PLL && globalConstArr_RCC_PLL_ClockConfig_t[0].PLLOutputValue / (globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar * globalConstArr_RCC_SYSCLK_ClockConfig_t[0].AHB_to_APB2_Prescalar) > 84000000) ||
@@ -212,7 +212,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
                         {
                             for (local_u16PLLN = 50; local_u16PLLN <= 432; local_u16PLLN++)
                             {
-                                for (local_u16PLLI2SN = local_u16PLLI2SN; N2 <= 432; local_u16PLLI2SN++)
+                                for (local_u16PLLI2SN = local_u16PLLI2SN; local_u16PLLI2SN <= 432; local_u16PLLI2SN++)
                                 {
                                     local_u32VCO1 = (local_u32PLLSrcSpeed * ((local_u16PLLN * 10) / local_u8PLLM)) / 10;
                                     local_u32VCO2 = (local_u32PLLSrcSpeed * ((local_u16PLLI2SN * 10) / local_u8PLLM)) / 10;
@@ -241,7 +241,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
                 {
                     for (local_u16PLLN = 50; local_u16PLLN <= 432; local_u16PLLN++)
                     {
-                        for (local_u16PLLI2SN = local_u16PLLI2SN; N2 <= 432; local_u16PLLI2SN++)
+                        for (local_u16PLLI2SN = local_u16PLLI2SN; local_u16PLLI2SN <= 432; local_u16PLLI2SN++)
                         {
                             local_u32VCO1 = (local_u32PLLSrcSpeed * ((local_u16PLLN * 10) / local_u8PLLM)) / 10;
                             local_u32VCO2 = (local_u32PLLSrcSpeed * ((local_u16PLLI2SN * 10) / local_u8PLLM)) / 10;
@@ -313,7 +313,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
                     {
                         for (local_u16PLLN = 50; local_u16PLLN <= 432; local_u16PLLN++)
                         {
-                            for (local_u16PLLI2SN = local_u16PLLI2SN; N2 <= 432; local_u16PLLI2SN++)
+                            for (local_u16PLLI2SN = local_u16PLLI2SN; local_u16PLLI2SN <= 432; local_u16PLLI2SN++)
                             {
                                 local_u32VCO1 = (local_u32PLLSrcSpeed * ((local_u16PLLN * 10) / local_u8PLLM)) / 10;
                                 local_u32VCO2 = (local_u32PLLSrcSpeed * ((local_u16PLLI2SN * 10) / local_u8PLLM)) / 10;
@@ -338,7 +338,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
             {
                 for (local_u8PLLI2SR = 2; local_u8PLLI2SR <= 7; local_u8PLLI2SR++)
                 {
-                    for (local_u16PLLI2SN = local_u16PLLI2SN; N2 <= 432; local_u16PLLI2SN++)
+                    for (local_u16PLLI2SN = local_u16PLLI2SN; local_u16PLLI2SN <= 432; local_u16PLLI2SN++)
                     {
                         local_u32VCO2 = (local_u32PLLSrcSpeed * ((local_u16PLLI2SN * 10) / local_u8PLLM)) / 10;
                         if (globalConstArr_RCC_PLL_ClockConfig_t[0].PLLI2SOutputValue == local_u32VCO2 / local_u8PLLI2SR &&
@@ -375,6 +375,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
         else
         {
             // do nothing
+        	local_u8PLLConfigSuccess = LIB_CONSTANTS_SUCCESS;
         }
 
     label:
@@ -429,7 +430,8 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
 
         // configure RCC Backup domain control register
         // TODO: configure BDRST and LSEBYP
-        local_u32TempReg = global_pRCCReg_t->RCC_BDCR;
+        // TODO: set DBP bit in PWR_CR in order to change the register value
+        local_u32TempReg = global_pRCCReg_t->RCC_BDCR; 
         LIB_MATH_BTT_ASSIGN_BITS(local_u32TempReg, HAL_RCC_BDCR_RTCSEL, globalConstArr_RCC_RTC_ClockConfig_t[0].RTCClockSource, 2);
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_BDCR_LSEON, globalConstArr_RCC_ClocksEnable_t[0].LSE_ClkEnable);
         global_pRCCReg_t->RCC_BDCR = local_u32TempReg;
@@ -450,7 +452,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
         local_u32TempReg = global_pRCCReg_t->RCC_CR;
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_CR_PLLI2SON, globalConstArr_RCC_ClocksEnable_t[0].PLLI2S_ClkEnable);
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_CR_PLLON, globalConstArr_RCC_ClocksEnable_t[0].PLL_ClkEnable);
-        LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_CR_PLLON, globalConstArr_RCC_MiscellaneousConfig_t[0].ClockSecurityEnable);
+        LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_CR_CSSON, globalConstArr_RCC_MiscellaneousConfig_t[0].ClockSecurityEnable);
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_CR_HSEON, globalConstArr_RCC_ClocksEnable_t[0].HSE_ClkEnable);
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_CR_HSION, globalConstArr_RCC_ClocksEnable_t[0].HSI_ClkEnable);
         global_pRCCReg_t->RCC_CR = local_u32TempReg;
@@ -2077,7 +2079,7 @@ HAL_RCC_ErrStates_t HAL_RCC_PeripheralModify(const uint8_t argConst_u8Peripheral
 /**
  *
  */
-HAL_RCC_ErrStates_t HAL_RCC_GetSystemResetType(const uint8_t *arg_Constpu8Value)
+HAL_RCC_ErrStates_t HAL_RCC_GetSystemResetType(uint8_t * const arg_Constpu8Value)
 {
     // local used variables
     HAL_RCC_ErrStates_t local_errState = HAL_RCC_OK;
@@ -2175,7 +2177,7 @@ HAL_RCC_ErrStates_t HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u
             argConst_u8PeripheralName == HAL_RCC_PERIPHERAL_CCM ||
             argConst_u8PeripheralName == HAL_RCC_PERIPHERAL_FLASH_MEM ||
             argConst_u8PeripheralName == HAL_RCC_PERIPHERAL_SRAM1 ||
-            argConst_u8PeripheralName == HAL_RCC_PERIPHERAL_SRAM2 ||)
+            argConst_u8PeripheralName == HAL_RCC_PERIPHERAL_SRAM2)
         {
             *arg_Constpu32Value = global_u32SystemClock / globalConstArr_RCC_SYSCLK_ClockConfig_t[0].SYSCLK_to_AHB_Prescalar;
         }
