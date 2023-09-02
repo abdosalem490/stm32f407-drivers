@@ -218,7 +218,11 @@ typedef enum
  *  \b POST-CONDITION               :       it configures the Clock sources.
  *                                          it configures all peripherals enablement of RCC clock during sleep and run mode.
  *  @return                         :       it return one of error states indicating whether a failure or success happened during initialization (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
- *  @see                            :       HAL_RCC_EnterMode(const uint8_t argConst_u8Mode)
+ *  @see                            :       HAL_RCC_PeripheralModify(const uint8_t argConst_u8PeripheralName, const uint8_t argConst_u8Operation)
+ *  @see                            :       HAL_RCC_GetSystemResetType(uint8_t *const arg_Constpu8Value)
+ *  @see                            :       HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u8PeripheralName, uint32_t *const arg_Constpu32Value)
+ *  @see                            :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
+ *
  *  \b Example:
  * @code
  * #include "RCC_header.h"
@@ -251,6 +255,10 @@ HAL_RCC_ErrStates_t HAL_RCC_Init();
  *  \b POST-CONDITION                           :       MCU peripheral status changes according to the desired operation.
  *  @return                                     :       it return one of error states indicating whether a failure or success happened (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
  *  @see                                        :       HAL_RCC_Init()
+ *  @see                                        :       HAL_RCC_GetSystemResetType(uint8_t *const arg_Constpu8Value)
+ *  @see                                        :       HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u8PeripheralName, uint32_t *const arg_Constpu32Value)
+ *  @see                                        :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
+ *
  *  \b Example:
  * @code
  * #include "RCC_header.h"
@@ -283,6 +291,10 @@ HAL_RCC_ErrStates_t HAL_RCC_PeripheralModify(const uint8_t argConst_u8Peripheral
  *  \b POST-CONDITION                       :       it clears the reset flags.
  *  @return                                 :       it return one of error states indicating whether a failure or success regarding function operation
  *  @see                                    :       HAL_RCC_Init()
+ *  @see                                    :       HAL_RCC_PeripheralModify(const uint8_t argConst_u8PeripheralName, const uint8_t argConst_u8Operation)
+ *  @see                                    :       HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u8PeripheralName, uint32_t *const arg_Constpu32Value)
+ *  @see                                    :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
+ *
  *  \b Example:
  * @code
  * #include "RCC_header.h"
@@ -321,7 +333,10 @@ HAL_RCC_ErrStates_t HAL_RCC_GetSystemResetType(uint8_t *const arg_Constpu8Value)
  *  \b POST-CONDITION                       :       None.
  *  @return                                 :       it return one of error states indicating whether a failure or success regarding function operation
  *  @see                                    :       HAL_RCC_Init()
- *  \b Example:
+ *  @see                                    :       HAL_RCC_PeripheralModify(const uint8_t argConst_u8PeripheralName, const uint8_t argConst_u8Operation)
+ *  @see                                    :       HAL_RCC_GetSystemResetType(uint8_t *const arg_Constpu8Value)
+ *  @see                                    :       HAL_RCC_RegisterCallback(const uint8_t argConst_u8CallBackType, const functionCallBack_t argConst_pFunctionCallBack)
+ * \b Example:
  * @code
  * #include "RCC_header.h"
  * int main() {
@@ -355,7 +370,10 @@ HAL_RCC_ErrStates_t HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u
  *  \b POST-CONDITION                       :       assign the given function to a specific action.
  *  @return                                 :       it return one of error states indicating whether a failure or success happened during the registration of callbacks (refer to @HAL_RCC_ErrStates_t in "RCC_header.h")
  *  @see                                    :       HAL_RCC_Init()
- *  \b Example:
+ *  @see                                    :       HAL_RCC_PeripheralModify(const uint8_t argConst_u8PeripheralName, const uint8_t argConst_u8Operation)
+ *  @see                                    :       HAL_RCC_GetSystemResetType(uint8_t *const arg_Constpu8Value)
+ *  @see                                    :       HAL_RCC_GetPeripheralInputFrequency(const uint8_t argConst_u8PeripheralName, uint32_t *const arg_Constpu32Value)
+ * \b Example:
  * @code
  * #include "RCC_header.h"
  *

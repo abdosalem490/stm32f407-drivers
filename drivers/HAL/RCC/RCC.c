@@ -375,7 +375,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
         else
         {
             // do nothing
-        	local_u8PLLConfigSuccess = LIB_CONSTANTS_SUCCESS;
+            local_u8PLLConfigSuccess = LIB_CONSTANTS_SUCCESS;
         }
 
     label:
@@ -431,7 +431,7 @@ HAL_RCC_ErrStates_t HAL_RCC_Init()
         // configure RCC Backup domain control register
         // TODO: configure BDRST and LSEBYP
         // TODO: set DBP bit in PWR_CR in order to change the register value
-        local_u32TempReg = global_pRCCReg_t->RCC_BDCR; 
+        local_u32TempReg = global_pRCCReg_t->RCC_BDCR;
         LIB_MATH_BTT_ASSIGN_BITS(local_u32TempReg, HAL_RCC_BDCR_RTCSEL, globalConstArr_RCC_RTC_ClockConfig_t[0].RTCClockSource, 2);
         LIB_MATH_BTT_ASSIGN_BIT(local_u32TempReg, HAL_RCC_BDCR_LSEON, globalConstArr_RCC_ClocksEnable_t[0].LSE_ClkEnable);
         global_pRCCReg_t->RCC_BDCR = local_u32TempReg;
@@ -2079,7 +2079,7 @@ HAL_RCC_ErrStates_t HAL_RCC_PeripheralModify(const uint8_t argConst_u8Peripheral
 /**
  *
  */
-HAL_RCC_ErrStates_t HAL_RCC_GetSystemResetType(uint8_t * const arg_Constpu8Value)
+HAL_RCC_ErrStates_t HAL_RCC_GetSystemResetType(uint8_t *const arg_Constpu8Value)
 {
     // local used variables
     HAL_RCC_ErrStates_t local_errState = HAL_RCC_OK;
