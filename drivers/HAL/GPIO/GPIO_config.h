@@ -1148,9 +1148,9 @@ const HAL_GPIO_PinConfig_t globalConstArr_GPIO_PinsConfig_t[][HAL_GPIO_MAX_PIN_I
         [HAL_GPIO_PIN0_INDEX] = {
             .GPIOName = HAL_GPIO_PORTA,
             .PINNumber = HAL_GPIO_PIN0,
-            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .Mode = HAL_GPIO_PIN_MODE_OUTPUT,
             .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
-            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_VERY_HEIGH,
             .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
             .LockEnable = LIB_CONSTANTS_UNLOCKED,
             .AlternateFunction = HAL_GPIOA_PIN0_EVENTOUT,

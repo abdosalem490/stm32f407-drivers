@@ -91,6 +91,7 @@ typedef enum
     HAL_GPIO_PORTG_INDEX = 6,
     HAL_GPIO_PORTH_INDEX = 7,
     HAL_GPIO_PORTI_INDEX = 8,
+    HAL_GPIO_MAX_PORT_INDEX,
 } HAL_GPIO__PortsIndexes_t;
 
 /**

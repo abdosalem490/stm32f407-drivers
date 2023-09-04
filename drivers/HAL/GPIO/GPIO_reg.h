@@ -63,6 +63,11 @@
  */
 #include "../../lib/common.h"
 
+/**
+ * @reason: contains indexes for PORTS
+ */
+#include "GPIO_private.h"
+
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
@@ -120,18 +125,29 @@ typedef struct
 /******************************************************************************
  * Variables
  *******************************************************************************/
-static __io HAL_GPIO_RegDef_t *global_pGPIOAReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOA_OFFSET)); /**< this is a pointer variable through which we will access our GPIOA registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOBReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOB_OFFSET)); /**< this is a pointer variable through which we will access our GPIOB registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOCReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOC_OFFSET)); /**< this is a pointer variable through which we will access our GPIOC registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIODReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOD_OFFSET)); /**< this is a pointer variable through which we will access our GPIOD registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOEReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOE_OFFSET)); /**< this is a pointer variable through which we will access our GPIOE registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOFReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOF_OFFSET)); /**< this is a pointer variable through which we will access our GPIOF registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOGReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOG_OFFSET)); /**< this is a pointer variable through which we will access our GPIOG registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOHReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOH_OFFSET)); /**< this is a pointer variable through which we will access our GPIOH registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOIReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOI_OFFSET)); /**< this is a pointer variable through which we will access our GPIOI registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOJReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOJ_OFFSET)); /**< this is a pointer variable through which we will access our GPIOJ registers to configure them*/
-static __io HAL_GPIO_RegDef_t *global_pGPIOKReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOK_OFFSET)); /**< this is a pointer variable through which we will access our GPIOK registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOAReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOA_OFFSET)); /**< this is a pointer variable through which we will access our GPIOA registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOBReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOB_OFFSET)); /**< this is a pointer variable through which we will access our GPIOB registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOCReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOC_OFFSET)); /**< this is a pointer variable through which we will access our GPIOC registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIODReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOD_OFFSET)); /**< this is a pointer variable through which we will access our GPIOD registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOEReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOE_OFFSET)); /**< this is a pointer variable through which we will access our GPIOE registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOFReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOF_OFFSET)); /**< this is a pointer variable through which we will access our GPIOF registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOGReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOG_OFFSET)); /**< this is a pointer variable through which we will access our GPIOG registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOHReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOH_OFFSET)); /**< this is a pointer variable through which we will access our GPIOH registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOIReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOI_OFFSET)); /**< this is a pointer variable through which we will access our GPIOI registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOJReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOJ_OFFSET)); /**< this is a pointer variable through which we will access our GPIOJ registers to configure them*/
+static __io HAL_GPIO_RegDef_t *const global_pGPIOKReg_t = ((HAL_GPIO_RegDef_t *)(HAL_CM4F_AHB1_BASEADDR + HAL_GPIOK_OFFSET)); /**< this is a pointer variable through which we will access our GPIOK registers to configure them*/
 
+static __io HAL_GPIO_RegDef_t *global_pGPIOs[] = {
+    [HAL_GPIO_PORTA_INDEX] = global_pGPIOAReg_t,
+    [HAL_GPIO_PORTB_INDEX] = global_pGPIOBReg_t,
+    [HAL_GPIO_PORTC_INDEX] = global_pGPIOCReg_t,
+    [HAL_GPIO_PORTD_INDEX] = global_pGPIODReg_t,
+    [HAL_GPIO_PORTE_INDEX] = global_pGPIOEReg_t,
+    [HAL_GPIO_PORTF_INDEX] = global_pGPIOFReg_t,
+    [HAL_GPIO_PORTG_INDEX] = global_pGPIOGReg_t,
+    [HAL_GPIO_PORTH_INDEX] = global_pGPIOHReg_t,
+    [HAL_GPIO_PORTI_INDEX] = global_pGPIOIReg_t,
+};
 /******************************************************************************
  * Function Prototypes
  *******************************************************************************/
