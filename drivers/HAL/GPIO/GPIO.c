@@ -274,7 +274,7 @@ HAL_GPIO_ErrStates_t HAL_GPIO_PinStateRead(uint16_t arg_u16GpioName, uint16_t ar
     uint8_t local_u8BitMSBSetPos = 0;
 
     // check for errors
-    if (arg_u16GpioName > HAL_GPIO_MAX_PORT || arg_u16GpioName == 0 || arg_u16PinNumber == 0 || argConst_u8Operation >= HAL_GPIO_MAX_PIN_OP)
+    if (arg_u16GpioName > HAL_GPIO_MAX_PORT || arg_u16GpioName == 0 || arg_u16PinNumber == 0 || arg_constpu8State == NULL)
     {
         local_errState = HAL_GPIO_ERR_INVALID_PARAMS;
     }

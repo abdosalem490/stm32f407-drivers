@@ -123,7 +123,7 @@
  *  |                               |        Maximum frequency        |     CL = 30 pF, VDD > 2.70 V     |   -   |  50 MHZ  |
  *  |                               |                                 |     CL = 10 pF, VDD > 2.70 V     |   -   | 180 MHZ  |
  *  |                               |                                 |     CL = 10 pF, VDD > 1.8 V      |   -   | 100 MHZ  |
- *  | HAL_GPIO_OUT_SPEED_VERY_HEIGH |---------------------------------+----------------------------------+-------+----------|
+ *  | HAL_GPIO_OUT_SPEED_VERY_HIGH |---------------------------------+----------------------------------+-------+----------|
  *  |                               |                                 |     CL = 30 pF, VDD > 2.70 V     |   -   |   4 ns   |
  *  |                               |        fall and rise time       |     CL = 30 pF, VDD > 1.8 V      |   -   |   6 ns   |
  *  |                               |                                 |     CL = 10 pF, VDD > 2.70 V     |   -   |  2.5 ns  |
@@ -1096,11 +1096,11 @@ typedef enum
  */
 typedef enum
 {
-    HAL_GPIO_OUT_SPEED_LOW = 0,        /**< maximum achievable frequency = 8 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
-    HAL_GPIO_OUT_SPEED_MEDIUM = 1,     /**< maximum achievable frequency = 50 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
-    HAL_GPIO_OUT_SPEED_HIGH = 2,       /**< maximum achievable frequency = 100 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
-    HAL_GPIO_OUT_SPEED_VERY_HEIGH = 3, /**< maximum achievable frequency = 180 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
-    HAL_GPIO_MAX_OUT_SPEED,            /**< this value shall never used by the user and it's only used by implementation code to verify input*/
+    HAL_GPIO_OUT_SPEED_LOW = 0,       /**< maximum achievable frequency = 8 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
+    HAL_GPIO_OUT_SPEED_MEDIUM = 1,    /**< maximum achievable frequency = 50 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
+    HAL_GPIO_OUT_SPEED_HIGH = 2,      /**< maximum achievable frequency = 100 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
+    HAL_GPIO_OUT_SPEED_VERY_HIGH = 3, /**< maximum achievable frequency = 180 MHZ, refer to @HAL_GPIO_PIN_SPEED in "GPIO_config.h for more information" */
+    HAL_GPIO_MAX_OUT_SPEED,           /**< this value shall never used by the user and it's only used by implementation code to verify input*/
 } HAL_GPIO_OutputSpeed_t;
 
 /**
@@ -1150,7 +1150,7 @@ const HAL_GPIO_PinConfig_t globalConstArr_GPIO_PinsConfig_t[][HAL_GPIO_MAX_PIN_I
             .PINNumber = HAL_GPIO_PIN0,
             .Mode = HAL_GPIO_PIN_MODE_OUTPUT,
             .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
-            .OutputSpeed = HAL_GPIO_OUT_SPEED_VERY_HEIGH,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_VERY_HIGH,
             .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
             .LockEnable = LIB_CONSTANTS_UNLOCKED,
             .AlternateFunction = HAL_GPIOA_PIN0_EVENTOUT,
@@ -1306,7 +1306,7 @@ const HAL_GPIO_PinConfig_t globalConstArr_GPIO_PinsConfig_t[][HAL_GPIO_MAX_PIN_I
             .PINNumber = HAL_GPIO_PIN13,
             .Mode = HAL_GPIO_PIN_MODE_ALTERNATE_FUNC,
             .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
-            .OutputSpeed = HAL_GPIO_OUT_SPEED_VERY_HEIGH,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_VERY_HIGH,
             .PullUpDown = HAL_GPIO_PULL_UP,
             .LockEnable = LIB_CONSTANTS_UNLOCKED,
             .AlternateFunction = HAL_GPIOA_PIN13_JTMS_SWDIO,
@@ -1334,6 +1334,202 @@ const HAL_GPIO_PinConfig_t globalConstArr_GPIO_PinsConfig_t[][HAL_GPIO_MAX_PIN_I
             .PullUpDown = HAL_GPIO_PULL_UP,
             .LockEnable = LIB_CONSTANTS_UNLOCKED,
             .AlternateFunction = HAL_GPIOA_PIN15_JTDI,
+        },
+    },
+
+    // configure pins of GPIO B
+    [HAL_GPIO_PORTB_INDEX] = {
+
+        // PB0
+        [HAL_GPIO_PIN0_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN0,
+            .Mode = HAL_GPIO_PIN_MODE_OUTPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_VERY_HIGH,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN0_EVENTOUT,
+        },
+
+        // PB1
+        [HAL_GPIO_PIN1_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN1,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN1_EVENTOUT,
+        },
+
+        // PB2
+        [HAL_GPIO_PIN2_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN2,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN2_EVENTOUT,
+        },
+
+        // PB3
+        [HAL_GPIO_PIN3_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN3,
+            .Mode = HAL_GPIO_PIN_MODE_ALTERNATE_FUNC,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_VERY_HIGH,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN3_JTDO,
+        },
+
+        // PB4
+        [HAL_GPIO_PIN4_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN4,
+            .Mode = HAL_GPIO_PIN_MODE_ALTERNATE_FUNC,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_PULL_UP,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN4_NJTRST,
+        },
+
+        // PB5
+        [HAL_GPIO_PIN5_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN5,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN5_EVENTOUT,
+        },
+
+        // PB6
+        [HAL_GPIO_PIN6_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN6,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN6_EVENTOUT,
+        },
+
+        // PB7
+        [HAL_GPIO_PIN7_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN7,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN7_EVENTOUT,
+        },
+
+        // PB8
+        [HAL_GPIO_PIN8_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN8,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN8_EVENTOUT,
+        },
+
+        // PB9
+        [HAL_GPIO_PIN9_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN9,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN9_EVENTOUT,
+        },
+
+        // PB10
+        [HAL_GPIO_PIN10_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN10,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN10_EVENTOUT,
+        },
+
+        // PB11
+        [HAL_GPIO_PIN11_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN11,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN11_EVENTOUT,
+        },
+
+        // PB12
+        [HAL_GPIO_PIN12_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN12,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN12_EVENTOUT,
+        },
+
+        // PB13
+        [HAL_GPIO_PIN13_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN13,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN13_EVENTOUT,
+        },
+
+        // PB14
+        [HAL_GPIO_PIN14_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN14,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN14_EVENTOUT,
+        },
+
+        // PB15
+        [HAL_GPIO_PIN15_INDEX] = {
+            .GPIOName = HAL_GPIO_PORTB,
+            .PINNumber = HAL_GPIO_PIN15,
+            .Mode = HAL_GPIO_PIN_MODE_INPUT,
+            .OutputType = HAL_GPIO_OUT_MODE_PUSH_PULL,
+            .OutputSpeed = HAL_GPIO_OUT_SPEED_LOW,
+            .PullUpDown = HAL_GPIO_NO_PULL_UP_DOWN,
+            .LockEnable = LIB_CONSTANTS_UNLOCKED,
+            .AlternateFunction = HAL_GPIOB_PIN15_EVENTOUT,
         },
     },
 

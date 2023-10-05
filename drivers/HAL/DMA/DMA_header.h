@@ -1,9 +1,9 @@
 /**
  * --------------------------------------------------------------------------------------------------------------------------------------
- * |    @title          :   System Configuration Controller                                                                             |
- * |    @file           :   SYSCFG_reg.h                                                                                                |
+ * |    @title          :   Direct Memory Access Controller                                                                             |
+ * |    @file           :   DMA_header.h                                                                                                |
  * |    @author         :   Abdelrahman Mohamed Salem                                                                                   |
- * |    @origin_date    :   04/09/2023                                                                                                  |
+ * |    @origin_date    :   09/09/2023                                                                                                  |
  * |    @version        :   1.0.0                                                                                                       |
  * |    @tool_chain     :   GNU Tools for STM32                                                                                         |
  * |    @compiler       :   GCC                                                                                                         |
@@ -11,7 +11,7 @@
  * |    @target         :   stm32f407VGTX                                                                                               |
  * |    @notes          :   None                                                                                                        |
  * |    @license        :   MIT License                                                                                                 |
- * |    @brief          :   this file contains registers addresses and definitions structs that deals with SYSCFG registers             |
+ * |    @brief          :   this header file contains useful functions to interface with the Direct Memory Access Controller (DMA)      |
  * --------------------------------------------------------------------------------------------------------------------------------------
  * |    MIT License                                                                                                                     |
  * |                                                                                                                                    |
@@ -38,61 +38,25 @@
  * |    @history_change_list                                                                                                            |
  * |    ====================                                                                                                            |
  * |    Date            Version         Author                          Description                                                     |
- * |    04/09/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
+ * |    09/09/2023      1.0.0           Abdelrahman Mohamed Salem       Interface Created.                                              |
  * --------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifndef HAL_SYSCFG_REG_H_
-#define HAL_SYSCFG_REG_H_
+#ifndef HAL_DMA_HEADER_H_
+#define HAL_DMA_HEADER_H_
 
 /******************************************************************************
  * Includes
  *******************************************************************************/
+
 /**
- * @reason: contains standard definitions for the integer variables
+ * @reason: contains standard integer definition
  */
 #include "../../lib/stdint.h"
-
-/**
- * @reason: contains useful math bit level functions
- */
-#include "../../lib/math_btt.h"
-
-/**
- * @reason: contains base addresses of APB2 bus
- */
-#include "../CM4F/CM4F_reg.h"
-
-/**
- * @reason: contains volatile keyword definition regarding selected compiler
- */
-#include "../../lib/common.h"
 
 /******************************************************************************
  * Preprocessor Constants
  *******************************************************************************/
-
-/**
- * @brief: this is the base address of SYSCFG registers used to configure some of the SYSCFG behaviors
- * @note: it will be referred to as @HAL_SYSCFG_BASE_ADDR
- */
-#define HAL_SYSCFG_OFFSET 0x00003800 /**< this is the offset of the SYSCFGA register from APB2 bus base address*/
-
-/**
- * @brief: bit definitions for SYSCFG memory remap register (SYSCFG_MEMRMP)
- */
-#define HAL_SYSCFG_MEMRMP_MEM_MODE 0 /**< Memory mapping selection. Set and cleared by software. This bit controls the memory internal mapping at address 0x0000 0000. After reset these bits take the value selected by the Boot pins (except for FSMC).*/
-
-/**
- * @brief: bit definitions for SYSCFG peripheral mode configuration register (SYSCFG_PMC)
- */
-#define HAL_SYSCFG_PMC_MII_RMII_SEL 23 /**< Ethernet PHY interface selection. Set and Cleared by software.These bits control the PHY interface for the Ethernet MAC..*/
-
-/**
- * @brief: bit definitions for Compensation cell control register (SYSCFG_CMPCR)
- */
-#define HAL_SYSCFG_CMPCR_READY 8 /**< Compensation cell ready flag.*/
-#define HAL_SYSCFG_CMP_PD 0      /**< Compensation cell power-down.*/
 
 /******************************************************************************
  * Configuration Constants
@@ -107,18 +71,17 @@
  *******************************************************************************/
 
 /**
- * @brief: this holds all registers used to configure SYSCFG
+ * @enum: Hal_DMA_ErrStates_t
+ * @brief: contains all possible errors that can result from dealing with the DMA.
  */
-typedef struct
+typedef enum
 {
-    __io uint32_t SYSCFG_MEMRMP;    /**< SYSCFG memory remap register. This register is used for specific configurations on memory remap. Two bits are used to configure the type of memory accessible at address 0x0000 0000. After reset these bits take the value selected by the BOOT pins.*/
-    __io uint32_t SYSCFG_PMC;       /**< SYSCFG peripheral mode configuration register.*/
-    __io uint32_t SYSCFG_EXTICR[4]; /**< SYSCFG external interrupt configuration register. */
-    __io uint32_t Reserved[2];      /**< Reserved. */
-    __io uint32_t SYSCFG_CMPCR;     /**< Compensation cell control register.*/
-} HAL_SYSCFG_RegDef_t;
+    HAL_DMA_OK,                 /**< it means everything has gone as intended so no errors*/
+    HAL_DMA_ERR_INVALID_PARAMS, /**< it means that the supplied parameters of the function are invalid*/
+    HAL_DMA_ERR_INVALID_CONFIG, /**< it means that the supplied configurations in the "DMA_config.h" file are incorrect*/
+    HAL_DMA_ADDR_NOT_ALIGNED,   /**< it means that the passed address to the function isn't aligned to address boundary given in configuration meaning that if data size is word (4-byte) then the passed address has to be 4-byte aligned*/
 
-static __io HAL_SYSCFG_RegDef_t *const global_pSYSCFGReg_t = ((HAL_SYSCFG_RegDef_t *)(HAL_CM4F_APB2_BASEADDR + HAL_SYSCFG_OFFSET)); /**< this is a pointer variable through which we will access our SYSCFG registers to configure them*/
+} HAL_DMA_ErrStates_t;
 
 /******************************************************************************
  * Variables
@@ -128,33 +91,43 @@ static __io HAL_SYSCFG_RegDef_t *const global_pSYSCFGReg_t = ((HAL_SYSCFG_RegDef
  * Function Prototypes
  *******************************************************************************/
 
-/******************************************************************************
- * Interface for peripherals in same level
- *******************************************************************************/
+// only Each stream also supports software trigger for memory-to-memory transfers (only
+// available for the DMA2 controller)
+
+// The DMA1 controller AHB peripheral port is not connected to the bus matrix like DMA2 controller. As a result, only DMA2
+// streams are able to perform memory-to-memory transfers.
 
 /**
- * @brief: used to enable compensation cell in case of fast speeds of GPIO are used
+ *  \b function                                 :       HAL_DMA_BootFrom(const uint8_t argConst_u8MemoryType)
+ *  \b Description                              :       this functions is used to boot from a specific memory.
+ *  @param  argConst_u8MemoryType [IN]          :       this is input parameter and for possible values refer to @HAL_DMA_BootMem_t in "DMA_header.h", used to tell the function from which function to boot.
+ *  @note                                       :       THE FUNCTION ISN'T COMPLETE YET.
+ *  \b PRE-CONDITION                            :       None.
+ *  \b POST-CONDITION                           :       MCU boots from the selected memory.
+ *  @return                                     :       it return one of error states indicating whether a failure or success happened (refer to @HAL_DMA_ErrStates_t in "DMA_header.h")
+ *  @see                                        :       None
+ *
+ *  \b Example:
+ * @code
+ * #include "DMA_header.h"
+ * int main() {
+ *  HAL_DMA_ErrStates_t local_errState_t = HAL_DMA_BootFrom(HAL_BOOT_MEM_SYSTEM_FLASH);
+ *  if (local_errState_t != HAL_DMA_OK)
+ *  {
+ *      // if the function returned thus means it failed.
+ *  }
+ *  return 0;
+ * }
+ * @endcode
+ *
+ * <br><b> - HISTORY OF CHANGES - </b>
+ * <table align="left" style="width:800px">
+ * <tr><td> Date       </td><td> Software Version </td><td> Initials </td><td> Description </td></tr>
+ * <tr><td> 04/09/2023 </td><td> 1.0.0            </td><td> AMS      </td><td> Interface Created </td></tr>
+ * </table><br><br>
+ * <hr>
  */
-#define HAL_SYSCFG_ENABLE_COMPEN_CELL()                                                     \
-    LIB_MATH_BTT_SET_BIT(global_pGPIOAReg_t->SYSCFG_CMPCR, HAL_SYSCFG_CMP_PD);              \
-    while (!LIB_MATH_BTT_GET_BIT(global_pGPIOAReg_t->SYSCFG_CMPCR, HAL_SYSCFG_CMPCR_READY)) \
-        ;
-
-#define HAL_SYSCFG_ETH_MII 0      /**< type of ethernet PHY interface is MII*/
-#define HAL_SYSCFG_ETH_RMII_PHY 1 /**< type of ethernet PHY interface is RMII*/
-/**
- * @brief: used to select Ethernet PHY interface
- * @param Value: possible values are HAL_SYSCFG_ETH_MII and HAL_SYSCFG_ETH_RMII_PHY
- */
-#define HAL_SYSCFG_ETH_PHY_TYPE(Value)  \   
-    LIB_MATH_BTT_ASSIGN_BIT(global_pGPIOAReg_t->SYSCFG_PMC, HAL_SYSCFG_PMC_MII_RMII_SEL, Value)
-
-/**
- * @brief: used to assign a specific EXTI line to a port number
- * @param arg_u8EXTILine : a number from 0 to 15 expressing which EXTI line
- * @param argConst_u8PortName : a number from 0 to 8 expressing which PORT to assign to where 0 is PORTA and 1 is PORTB and so on.
- */
-void HAL_SYSCFG_voidAssignEXTILine(const uint8_t argConst_u8EXTILine, const uint8_t argConst_u8PortName);
+// HAL_DMA_ErrStates_t HAL_DMA_BootFrom(const uint8_t argConst_u8MemoryType);
 
 /*** End of File **************************************************************/
-#endif /*HAL_SYSCFG_REG_H_*/
+#endif /*HAL_DMA_HEADER_H_*/

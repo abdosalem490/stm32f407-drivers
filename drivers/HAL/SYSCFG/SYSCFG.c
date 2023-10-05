@@ -112,7 +112,7 @@
 /**
  * @brief: this function is intended to be only used by GPIO peripheral for configuring interrupts
  */
-void HAL_SYSCFG_voidAssignEXTILine(const uint8_t argConst_u8EXTILine, const uint8 argConst_u8PortName)
+void HAL_SYSCFG_voidAssignEXTILine(const uint8_t argConst_u8EXTILine, const uint8_t argConst_u8PortName)
 {
     if (argConst_u8EXTILine <= 15 && argConst_u8PortName <= 8)
     {
